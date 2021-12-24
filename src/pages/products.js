@@ -21,7 +21,7 @@ const Products = () => (
     >
       <Container maxWidth={false}>
         <ProductListToolbar />
-        <Box sx={{ pt: 3 }}>
+        <Box sx={{ pt: 3, backgroundColor: 'neutral.900', }}>
           <Grid
             container
             spacing={3}

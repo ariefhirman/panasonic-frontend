@@ -8,8 +8,8 @@ import { UserCircle as UserCircleIcon } from '../icons/user-circle';
 import { Users as UsersIcon } from '../icons/users';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  boxShadow: theme.shadows[3]
+  backgroundColor: theme.palette.background.dark,
+  
 }));
 
 export const DashboardNavbar = (props) => {
@@ -46,13 +46,8 @@ export const DashboardNavbar = (props) => {
           >
             <MenuIcon fontSize="small" />
           </IconButton>
-          <Tooltip title="Search">
-            <IconButton sx={{ ml: 1 }}>
-              <SearchIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Contacts">
+          {/* <Tooltip title="Contacts">
             <IconButton sx={{ ml: 1 }}>
               <UsersIcon fontSize="small" />
             </IconButton>
@@ -67,12 +62,13 @@ export const DashboardNavbar = (props) => {
                 <BellIcon fontSize="small" />
               </Badge>
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           <Avatar
             sx={{
-              height: 40,
-              width: 40,
-              ml: 1
+              mt: 2,
+              height: '4em',
+              width: '4em',
+              ml: 5
             }}
             src="/static/images/avatars/avatar_1.png"
           >

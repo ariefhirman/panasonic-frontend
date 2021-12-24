@@ -48,10 +48,17 @@ export const AccountProfileDetails = (props) => {
       noValidate
       {...props}
     >
-      <Card>
+      <Card
+        sx={{
+          backgroundColor: "#252F3A"
+        }}
+      >
         <CardHeader
           subheader="The information can be edited"
           title="Profile"
+          sx={{
+            color: "#fff"
+          }}
         />
         <Divider />
         <CardContent>
@@ -73,6 +80,7 @@ export const AccountProfileDetails = (props) => {
                 required
                 value={values.firstName}
                 variant="outlined"
+                sx={{ input: { color: '#FFF' } }}
               />
             </Grid>
             <Grid
@@ -88,6 +96,7 @@ export const AccountProfileDetails = (props) => {
                 required
                 value={values.lastName}
                 variant="outlined"
+                sx={{ input: { color: '#FFF' } }}
               />
             </Grid>
             <Grid
@@ -103,6 +112,7 @@ export const AccountProfileDetails = (props) => {
                 required
                 value={values.email}
                 variant="outlined"
+                sx={{ input: { color: '#FFF' } }}
               />
             </Grid>
             <Grid
@@ -118,6 +128,7 @@ export const AccountProfileDetails = (props) => {
                 type="number"
                 value={values.phone}
                 variant="outlined"
+                sx={{ input: { color: '#FFF' } }}
               />
             </Grid>
             <Grid
@@ -133,6 +144,7 @@ export const AccountProfileDetails = (props) => {
                 required
                 value={values.country}
                 variant="outlined"
+                sx={{ input: { color: '#FFF' } }}
               />
             </Grid>
             <Grid
@@ -150,6 +162,7 @@ export const AccountProfileDetails = (props) => {
                 SelectProps={{ native: true }}
                 value={values.state}
                 variant="outlined"
+                sx={{ input: { color: '#FFF' } }}
               >
                 {states.map((option) => (
                   <option
@@ -164,20 +177,6 @@ export const AccountProfileDetails = (props) => {
           </Grid>
         </CardContent>
         <Divider />
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            p: 2
-          }}
-        >
-          <Button
-            color="primary"
-            variant="contained"
-          >
-            Save details
-          </Button>
-        </Box>
       </Card>
     </form>
   );

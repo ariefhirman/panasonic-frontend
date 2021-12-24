@@ -15,7 +15,8 @@ const Settings = () => (
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8
+        py: 8,
+        backgroundColor: 'neutral.900'
       }}
     >
       <Container maxWidth="lg">

@@ -19,7 +19,11 @@ const user = {
 };
 
 export const AccountProfile = (props) => (
-  <Card {...props}>
+  <Card {...props} 
+    sx={{
+      backgroundColor: "#252F3A"
+    }}
+  >
     <CardContent>
       <Box
         sx={{
@@ -37,35 +41,25 @@ export const AccountProfile = (props) => (
           }}
         />
         <Typography
-          color="textPrimary"
+          color="#fff"
           gutterBottom
           variant="h5"
         >
           {user.name}
         </Typography>
         <Typography
-          color="textSecondary"
+          color="#E7E8E9"
           variant="body2"
         >
           {`${user.city} ${user.country}`}
         </Typography>
         <Typography
-          color="textSecondary"
+          color="#E7E8E9"
           variant="body2"
         >
           {user.timezone}
         </Typography>
       </Box>
     </CardContent>
-    <Divider />
-    <CardActions>
-      <Button
-        color="primary"
-        fullWidth
-        variant="text"
-      >
-        Upload picture
-      </Button>
-    </CardActions>
   </Card>
 );

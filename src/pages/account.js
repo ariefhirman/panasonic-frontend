@@ -15,12 +15,13 @@ const Account = () => (
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8
+        py: 8,
+        backgroundColor: 'neutral.900',
       }}
     >
       <Container maxWidth="lg">
         <Typography
-          sx={{ mb: 3 }}
+          sx={{ mb: 3, color: "#FFF" }}
           variant="h4"
         >
           Account
