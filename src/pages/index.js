@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -6,11 +7,19 @@ import * as Yup from 'yup';
 import { Box, Button, Container, Grid, Link, TextField, Typography, Divider } from '@mui/material';
 
 const Login = () => {
+  // useEffect(() => {
+  //   let isUser = AuthService.getCurrentUser();
+  //   console.log(isUser);
+  //   if(isUser) {
+  //     // navigate('/app/data');
+  //     // pindah kalo udh login
+  //   }}
+  // );
+  
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: 'loremipsum@lorem.com',
-      ipAddress: '192.168.1.7',
       password: 'Password123'
     },
     validationSchema: Yup.object({
@@ -21,20 +30,32 @@ const Login = () => {
         .max(255)
         .required(
           'Email is required'),
-      ipAddress: Yup
-        .string()
-        .max(255)
-        .required(
-          'IP Address is required'
-        ),
       password: Yup
         .string()
         .max(255)
         .required(
           'Password is required')
     }),
-    onSubmit: () => {
+    onSubmit: (values, { resetForm }) => {
       router.push('/dashboard');
+      // AuthService.login(values.username, values.password).then(
+      //   () => {
+      //     const userData = AuthService.getCurrentUser();
+      //     router.push('/dashboard');
+      //     // navigate('/app/data', { replace: true, state: { node_id: data_node } });
+      //     // window.location.reload();
+      //   },
+      //   error => {
+      //     const resMessage =
+      //       (error.response &&
+      //         error.response.data &&
+      //         error.response.data.message) ||
+      //       error.message ||
+      //       error.toString();
+      //     console.log(error.message);
+      //     resetForm();
+      //   }
+      // );
     }
   });
 
@@ -115,20 +136,6 @@ const Login = () => {
                   onChange={formik.handleChange}
                   type="email"
                   value={formik.values.email}
-                  variant="outlined"
-                  sx={{ input: { color: '#FFF' } }}
-                />
-                <TextField
-                  error={Boolean(formik.touched.ipAddress && formik.errors.ipAddress)}
-                  fullWidth
-                  helperText={formik.touched.ipAddress && formik.errors.ipAddress}
-                  label="Mobile App IP Adress"
-                  margin="normal"
-                  name="ip_address"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="text"
-                  value={formik.values.ipAddress}
                   variant="outlined"
                   sx={{ input: { color: '#FFF' } }}
                 />

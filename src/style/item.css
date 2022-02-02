@@ -1,0 +1,117 @@
+@import "~react-image-gallery/styles/css/image-gallery.css";
+
+.movie-layout{
+	flex-wrap: nowrap;
+}
+
+.col-md-2{
+	padding: 0px 0.25em;
+}
+
+.col-md-6{
+	padding: 0px 2.5em;
+}
+
+.box{
+	width: 2.25em;
+	height: 2.25em;
+	border-radius: 25%;
+	margin: 0.25em;
+}
+
+.box:hover{
+	transform: scale(1.1);
+}
+
+.row{
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.box-grey{
+	background-color: #ddd;
+	cursor: pointer;
+}
+
+.box-black{
+	background-color: #36485D;
+	cursor: pointer;
+}
+
+.box-green {
+	background-color: #11AC92;
+	cursor: pointer;
+}
+
+.box-red {
+	background-color: #F00;
+	cursor: pointer;
+}
+
+.box-yellow {
+	background-color: #FF0;
+	cursor: pointer;
+}
+
+.box-undefined{
+	cursor: auto;
+	pointer-events: none;
+}
+
+.mission-selector {
+	cursor: pointer;
+}
+
+.mission-selector:hover{
+	transform: scale(1.05);
+}
+
+.movie-complex p{
+	text-align: center;
+	font-size: 20px;
+}
+
+.movie-selector{
+	width: 250px;
+}
+
+.mission-history-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE and Edge */
+.mission-history-list {
+  -ms-overflow-style: none;
+}
+
+@media (min-width: 767px) and (max-width: 1080px) {
+	.list-history-button {
+		height: 900px;
+	}
+}
+
+@media (min-width: 1280px) {
+	.list-history-button {
+		height: 258px;
+	}
+
+	.box{
+		width: 1.5em;
+		height: 1.5em;
+		border-radius: 25%;
+		margin: 0.1em;
+	}
+}
+
+@media (min-width: 1920px) {
+	.list-history-button {
+		height: 232px;
+	}
+
+	.box{
+		width: 2.25em;
+		height: 2.25em;
+		border-radius: 25%;
+		margin: 0.25em;
+	}
+}

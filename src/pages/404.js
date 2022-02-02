@@ -16,7 +16,8 @@ const NotFound = () => (
         alignItems: 'center',
         display: 'flex',
         flexGrow: 1,
-        minHeight: '100%'
+        minHeight: '100%',
+        backgroundColor: 'neutral.900'
       }}
     >
       <Container maxWidth="md">
@@ -29,14 +30,14 @@ const NotFound = () => (
         >
           <Typography
             align="center"
-            color="textPrimary"
+            color="#FFF"
             variant="h1"
           >
             404: The page you are looking for isn’t here
           </Typography>
           <Typography
             align="center"
-            color="textPrimary"
+            color="#FFF"
             variant="subtitle2"
           >
             You either tried some shady route or you came here by mistake.

@@ -3,34 +3,36 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { ChartBar as ChartBarIcon } from '../icons/chart-bar';
 import { Cog as CogIcon } from '../icons/cog';
-import { Lock as LockIcon } from '../icons/lock';
-import { Selector as SelectorIcon } from '../icons/selector';
-import { ShoppingBag as ShoppingBagIcon } from '../icons/shopping-bag';
 import { User as UserIcon } from '../icons/user';
-import { UserAdd as UserAddIcon } from '../icons/user-add';
-import { Users as UsersIcon } from '../icons/users';
-import { XCircle as XCircleIcon } from '../icons/x-circle';
+import { TableSplit as MissionIcon } from '../icons/table-split';
+import { Progress as ProgressIcon } from '../icons/progress';
+import { History as HistoryIcon } from '../icons/history';
+import { Logout as LogoutIcon } from '../icons/logout';
+import HomeIcon from '@mui/icons-material/Home';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
 
 const items = [
   {
     href: '/dashboard',
-    icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard'
+    icon: (<HomeIcon fontSize="small" />),
+    title: 'Home'
   },
   {
-    href: '/customers',
-    icon: (<UsersIcon fontSize="small" />),
-    title: 'Customers'
+    href: '/mission-config',
+    icon: (<MissionIcon fontSize="small" />),
+    title: 'Mission Configuration'
   },
   {
-    href: '/products',
-    icon: (<ShoppingBagIcon fontSize="small" />),
-    title: 'Products'
+    href: '/check-progress',
+    icon: (<ProgressIcon fontSize="small" />),
+    title: 'Check Progress'
+  },
+  {
+    href: '/history',
+    icon: (<HistoryIcon fontSize="small" />),
+    title: 'History'
   },
   {
     href: '/account',
@@ -38,25 +40,20 @@ const items = [
     title: 'Account'
   },
   {
-    href: '/settings',
-    icon: (<CogIcon fontSize="small" />),
-    title: 'Settings'
+    href: '/check-grid',
+    icon: (<UserIcon fontSize="small" />),
+    title: 'Grid'
   },
-  {
-    href: '/login',
-    icon: (<LockIcon fontSize="small" />),
-    title: 'Login'
-  },
-  {
-    href: '/register',
-    icon: (<UserAddIcon fontSize="small" />),
-    title: 'Register'
-  },
-  {
-    href: '/404',
-    icon: (<XCircleIcon fontSize="small" />),
-    title: 'Error'
-  }
+  // {
+  //   href: '/product-details',
+  //   icon: (<UserIcon fontSize="small" />),
+  //   title: 'Product Details'
+  // },
+  // {
+  //   href: '/success-launched',
+  //   icon: (<UserIcon fontSize="small" />),
+  //   title: 'Success'
+  // }
 ];
 
 export const DashboardSidebar = (props) => {
@@ -98,46 +95,28 @@ export const DashboardSidebar = (props) => {
               passHref
             >
               <a>
-                <Logo
-                  sx={{
-                    height: 42,
-                    width: 42
-                  }}
-                />
+                <img
+                    alt="panasonic-logo"
+                    src="/static/images/panasonic-white.png"
+                    style={{
+                      height: '2em',
+                      width: '12em',
+                      marginTop: '1em',
+                      marginLeft: '1em'
+                    }}
+                    align="center"
+                  />
               </a>
             </NextLink>
           </Box>
-          <Box sx={{ px: 2 }}>
-            <Box
-              sx={{
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                px: 3,
-                py: '11px',
-                borderRadius: 1
-              }}
-            >
-              <div>
-                <Typography
-                  color="inherit"
-                  variant="subtitle1"
-                >
-                  Acme Inc
-                </Typography>
-              </div>
-            </Box>
-          </Box>
         </div>
-        <Divider
+        {/* <Divider
           sx={{
             borderColor: '#2D3748',
             my: 3
           }}
-        />
-        <Box sx={{ flexGrow: 1 }}>
+        /> */}
+        <Box sx={{ flexGrow: 1, marginTop: '1em' }}>
           {items.map((item) => (
             <NavItem
               key={item.title}
@@ -147,7 +126,12 @@ export const DashboardSidebar = (props) => {
             />
           ))}
         </Box>
-        <Divider sx={{ borderColor: '#2D3748' }} />
+        {/* <Divider sx={{ borderColor: '#2D3748' }} /> */}
+        <NavItem
+          icon={(<LogoutIcon fontSize="small" />)}
+          href='/'
+          title="Logout"
+        />
       </Box>
     </>
   );
