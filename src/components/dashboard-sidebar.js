@@ -12,6 +12,7 @@ import { Logout as LogoutIcon } from '../icons/logout';
 import HomeIcon from '@mui/icons-material/Home';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
+import AuthService from 'src/service/auth.service';
 
 const items = [
   {
@@ -78,6 +79,10 @@ export const DashboardSidebar = (props) => {
     [router.asPath]
   );
 
+  const logout = () => {
+    AuthService.logout();
+  };
+
   const content = (
     <>
       <Box
@@ -131,6 +136,7 @@ export const DashboardSidebar = (props) => {
           icon={(<LogoutIcon fontSize="small" />)}
           href='/'
           title="Logout"
+          onClick={logout}
         />
       </Box>
     </>

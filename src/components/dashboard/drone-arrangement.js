@@ -17,8 +17,7 @@ export const DroneArrangement = (props) => {
 
   const handleStatus = (event) => {
     setStartMission(true);
-    props.parentCallback(true);
-    console.log(event);
+    props.parentcallback(true);
   };
 
   let connectionColor = "#F00";

@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Box, Card, Container, Grid } from '@mui/material';
 import { LatestOrders } from '../components/dashboard/latest-orders';
 import { LatestProducts } from '../components/dashboard/latest-products';
@@ -14,6 +15,7 @@ import { ItemMatrix } from 'src/components/item/item-matrix';
 import { ProductScannedList } from 'src/components/dashboard/overview/product-scanned-list';
 import { ProductScannedToolbar } from 'src/components/dashboard/overview/product-scanned-toolbar';
 import { products } from '../__mocks__/products';
+import AuthService from 'src/service/auth.service';
 
 const getLayoutState = (products, state) => {
   for (let i in products) {
@@ -31,6 +33,7 @@ const topic = {
 }
 
 const Dashboard = () => {
+  const router = useRouter();
   let initialState =  {
     success: [],
     audited: []
@@ -41,6 +44,15 @@ const Dashboard = () => {
   const [progress, setProgress] = React.useState(initialState);
   const [statusTable, setStatusTable] = React.useState('')
   const [tableLayout, setTableLayout] = React.useState(true);
+
+  React.useEffect(() => {
+    let isUser = AuthService.getCurrentUser();
+    if(!isUser) {
+      router.push('/');
+      // navigate('/app/data');
+      // pindah kalo udh login
+    }}
+  );
 
   let dataProduct = products;
 

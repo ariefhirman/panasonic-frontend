@@ -1,9 +1,11 @@
 import React from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { MissionHistory } from 'src/components/dashboard/mission-history/mission-history';
 import { ItemMatrixHistory } from 'src/components/item/item-matrix-history';
+import AuthService from 'src/service/auth.service';
 
 const MissionName = "Mission 1"
 
@@ -13,6 +15,16 @@ const initialState =  {
 }
 
 const History = () => {
+  const router = useRouter();
+  React.useEffect(() => {
+    let isUser = AuthService.getCurrentUser();
+    if(!isUser) {
+      router.push('/');
+      // navigate('/app/data');
+      // pindah kalo udh login
+    }}
+  );
+
   const [progress, SetProgress] = React.useState(initialState);
 
   return (

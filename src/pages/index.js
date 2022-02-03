@@ -5,16 +5,17 @@ import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Container, Grid, Link, TextField, Typography, Divider } from '@mui/material';
+import AuthService from 'src/service/auth.service';
 
 const Login = () => {
-  // useEffect(() => {
-  //   let isUser = AuthService.getCurrentUser();
-  //   console.log(isUser);
-  //   if(isUser) {
-  //     // navigate('/app/data');
-  //     // pindah kalo udh login
-  //   }}
-  // );
+  useEffect(() => {
+    let isUser = AuthService.getCurrentUser();
+    if(isUser) {
+      router.push('/dashboard');
+      // navigate('/app/data');
+      // pindah kalo udh login
+    }}
+  );
   
   const router = useRouter();
   const formik = useFormik({
@@ -37,25 +38,26 @@ const Login = () => {
           'Password is required')
     }),
     onSubmit: (values, { resetForm }) => {
-      router.push('/dashboard');
-      // AuthService.login(values.username, values.password).then(
-      //   () => {
-      //     const userData = AuthService.getCurrentUser();
-      //     router.push('/dashboard');
-      //     // navigate('/app/data', { replace: true, state: { node_id: data_node } });
-      //     // window.location.reload();
-      //   },
-      //   error => {
-      //     const resMessage =
-      //       (error.response &&
-      //         error.response.data &&
-      //         error.response.data.message) ||
-      //       error.message ||
-      //       error.toString();
-      //     console.log(error.message);
-      //     resetForm();
-      //   }
-      // );
+      console.log(values);
+      // router.push('/dashboard');
+      AuthService.login(values.email, values.password).then(
+        () => {
+          // const userData = AuthService.getCurrentUser();
+          router.push('/dashboard');
+          // navigate('/app/data', { replace: true, state: { node_id: data_node } });
+          // window.location.reload();
+        },
+        error => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          console.log(error.message);
+          resetForm();
+        }
+      );
     }
   });
 

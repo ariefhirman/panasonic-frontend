@@ -1,12 +1,15 @@
 import React from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Grid, Box, Container, Typography } from '@mui/material';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { DroneArrangement } from 'src/components/dashboard/drone-arrangement';
 import { ItemMatrixConfig } from 'src/components/item/item-matrix-config';
 import mqttClientContext from 'src/context/mqttContext';
 import droneArrangementContext from 'src/context/mission-config/droneArrangementContext';
+import AuthService from 'src/service/auth.service';
 
+// topic for mission config
 const topicConfig = {
   drone_name: 'dji/model/name',
   drone_connection: 'dji/status/connection',
@@ -16,14 +19,24 @@ const topicConfig = {
   drone_horizontal_speed: 'dji/status/horizontal-speed'
 };
 
+// topic for starting mission
 const topicStartMission = 'mission-planner/start';
 
+// variables for POST config
+const widthType15 = 2.7;
+const level_height_type15 = [
+  1.225, 1.05, 1.06
+];
+
 const MissionConfig = () => {
+  const router = useRouter();
   // const [mesg, setMesg] = React.useState('Test');
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [startMission, setStartMission] = React.useState(false);
+  const [sweepConfig, setSweepConfig] = React.useState();
+  const [rackSize, setRackSize] = React.useState();
   const client = React.useContext(mqttClientContext);
   // let note;
   console.log(client);
@@ -39,7 +52,27 @@ const MissionConfig = () => {
     battery_level: batteryLevel
   };
 
+  const fillRackSizeArray = (sweepConfig) => {
+    let arrRackSize = [];
+    console.log(sweepConfig);
+    for(let i=0; i < sweepConfig[sweepConfig.length-1]; i++) {
+      let configRackSize = {};
+      configRackSize["width"] = widthType15;
+      console.log(sweepConfig.includes(i+1));
+      if (sweepConfig.includes(i+1)) {
+        configRackSize["level_height"] = level_height_type15;
+      } else {
+        configRackSize["level_height"] = [];
+      }
+      arrRackSize.push(configRackSize)
+      console.log(configRackSize);
+    };
+    console.log(arrRackSize);
+    return arrRackSize;
+  }
+
   if (startMission) {
+    let arrRackSize = fillRackSizeArray(sweepConfig);
     client.publish(topicStartMission, 'True', { qos: 1, retain: false }, function (error) {
       if (error) {
         console.log(error)
@@ -67,6 +100,17 @@ const MissionConfig = () => {
     setStartMission(data);
   }
 
+  const handleCallbackSweepConfig = (data) => {
+    // if (listBox.includes(data)) {
+    //   return;
+    // }
+    // // listBox.push(boxSelected);
+    // listBox.push(data);
+    setSweepConfig(data);
+    // props.parentcallback(listBox);
+    console.log(data);
+  };
+
   let note;
   React.useEffect(() => {
     client.on('message', function (topic, message) {
@@ -84,6 +128,15 @@ const MissionConfig = () => {
       // client.end();
     });
   });
+
+  React.useEffect(() => {
+    let isUser = AuthService.getCurrentUser();
+    if(!isUser) {
+      router.push('/');
+      // navigate('/app/data');
+      // pindah kalo udh login
+    }}
+  );
 
   return (
     <>
@@ -112,7 +165,7 @@ const MissionConfig = () => {
             xl={9}
             xs={12}
           >
-            <ItemMatrixConfig />
+            <ItemMatrixConfig parentcallback={handleCallbackSweepConfig}/>
           </Grid>
           <Grid
             item
@@ -122,7 +175,7 @@ const MissionConfig = () => {
             xs={12}
           >
             <droneArrangementContext.Provider value={arrangementContext}>
-              <DroneArrangement parentCallback={handleCallbackStatus} sx={{ height: '100%' }} />
+              <DroneArrangement parentcallback={handleCallbackStatus} sx={{ height: '100%' }} />
             </droneArrangementContext.Provider>
           </Grid>
         </Grid>

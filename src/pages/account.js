@@ -1,10 +1,24 @@
+import React from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import { AccountProfile } from '../components/account/account-profile';
 import { AccountProfileDetails } from '../components/account/account-profile-details';
 import { DashboardLayout } from '../components/dashboard-layout';
+import AuthService from 'src/service/auth.service';
 
-const Account = () => (
+const Account = () => {
+  const router = useRouter();
+  React.useEffect(() => {
+    let isUser = AuthService.getCurrentUser();
+    if(!isUser) {
+      router.push('/');
+      // navigate('/app/data');
+      // pindah kalo udh login
+    }}
+  );
+
+  return (
   <>
     <Head>
       <title>
@@ -50,7 +64,8 @@ const Account = () => (
       </Container>
     </Box>
   </>
-);
+  )
+};
 
 Account.getLayout = (page) => (
   <DashboardLayout>

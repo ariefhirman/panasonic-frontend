@@ -1,11 +1,13 @@
 import React from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Box, Container, Grid, Pagination } from '@mui/material';
 import { DroneInformation } from '../components/dashboard/drone-information';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { ItemMatrixProgress } from 'src/components/item/item-matrix-progress';
 import mqttClientContext from 'src/context/mqttContext';
 import progressInfoContext from 'src/context/check-progress/progressInfoContext';
+import AuthService from 'src/service/auth.service';
 
 const initialState =  {
   success: [1,2,3],
@@ -22,6 +24,7 @@ const topicProgress = {
 }
 
 const CheckProgress = () => {
+  const router = useRouter();
   const [progress, SetProgress] = React.useState(initialState);
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
@@ -76,6 +79,15 @@ const CheckProgress = () => {
       // client.end();
     });
   });
+
+  React.useEffect(() => {
+    let isUser = AuthService.getCurrentUser();
+    if(!isUser) {
+      router.push('/');
+      // navigate('/app/data');
+      // pindah kalo udh login
+    }}
+  );
 
   return (
     <>

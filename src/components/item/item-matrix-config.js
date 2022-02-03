@@ -3,12 +3,17 @@ import { Box, Button, Card, Grid, Typography } from '@mui/material';
 import ItemBoxConfig from './item-config'
 
 let listBox = [];
+let rackSize = [];
+const width = 2.7;
+const level_height = [
+  1.225, 1.05, 1.06
+];
 
 const emptyBox = [
   25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
 ]
 
-export const ItemMatrixConfig = () => {
+export const ItemMatrixConfig = (props) => {
   const [boxSelected, setBoxSelected] = React.useState([]);
 
   const resetConfigHandler = () => {
@@ -24,6 +29,8 @@ export const ItemMatrixConfig = () => {
     // listBox.push(boxSelected);
     listBox.push(data);
     setBoxSelected(listBox);
+    props.parentcallback(listBox);
+    console.log(listBox);
   };
 
   const fillArray = (start, end) => {
