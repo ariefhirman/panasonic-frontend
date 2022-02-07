@@ -5,9 +5,7 @@ const API_URL = 'http://localhost:8080/api/v1/detection';
 
 class DetectionService {
   fetchDetectionByRackID(rackID) {
-    return axios.get(API_URL + '/racks', {
-      rack_id: rackID
-    }, { headers: authHeader() })
+    return axios.get(API_URL + '/racks/' + rackID, { headers: authHeader() })
     .then(response => {
         localStorage.setItem("detectionByRack", JSON.stringify(response.data));
       }
@@ -25,22 +23,18 @@ class DetectionService {
   }
 
   fetchDetectionByStatus(status) {
-    return axios.get(API_URL + '/status', {
-      status
-    }, { headers: authHeader() })
+    return axios.get(API_URL + '/status/' + status, { headers: authHeader() })
     .then(response => {
-        console.log(response.data);
         localStorage.setItem("detectionByStatus", JSON.stringify(response.data));
+        return response.data;
       }
     );
   }
 
   fetchDetectionByDate(date) {
-    return axios.get(API_URL + '/dates', {
-      date
-    }, { headers: authHeader() })
+    // console.log(API_URL + '/dates' + date);
+    return axios.get(API_URL + '/dates/' + date, { headers: authHeader() })
     .then(response => {
-        console.log(response.data);
         localStorage.setItem("detectionByDate", JSON.stringify(response.data));
         return response.data;
       }
@@ -50,8 +44,8 @@ class DetectionService {
   fetchAllDetection() {
     return axios.get(API_URL, { headers: authHeader() })
     .then(response => {
-        console.log(response.data);
         localStorage.setItem("allDetectionData", JSON.stringify(response.data));
+        return response.data;
       }
     );
   }

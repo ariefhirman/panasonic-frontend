@@ -37,36 +37,53 @@ const Dashboard = () => {
 
   getLayoutState(products, initialState);
 
+  const [data, setData] = React.useState();
   const [progress, setProgress] = React.useState(initialState);
   const [statusTable, setStatusTable] = React.useState('')
   const [tableLayout, setTableLayout] = React.useState(true);
 
-  let data;
+  // const getProductDetectionList = (data) => {
+  //   console.log(data);
+  //   if (!data) {
+  //     return
+  //   } else {
+  //     console.log(data[0].product_detection);
+  //     let arrProduct = data[0].product_detection;
+  //     console.log(arrProduct)
+  //     for (let i = 0; i < arrProduct.length; i++) {
+  //       arrProduct[i]["id"] = data.id;
+  //       arrProduct[i]["rack_id"] = data.rack_id;
+  //       arrProduct[i]["date"] = data.date;
+  //       arrProduct[i]["status"] = data.status;
+  //     }
+  //    console.log(arrProduct);
+  //    return arrProduct;
+  //   }
+  // }
 
   React.useEffect(() => {
     let isUser = AuthService.getCurrentUser();
     if(!isUser) {
       router.push('/');
-      // navigate('/app/data');
-      // pindah kalo udh login
     }}
   );
 
   React.useEffect(() => {
-    let detectionData = DetectionService.fetchDetectionByStatus(1);
-    console.log(detectionData);
+    let promise = DetectionService.fetchAllDetection();
+    // let promise = DetectionService.fetchDetectionByDate("25-01-2022");
+    promise.then((data) => setData(data));
   })
-
   let dataProduct = products;
+  // let detection = getProductDetectionList(data);
 
   const filterProduct = (products, status) => {
     if (status == 'success') {
       var filtered = products.filter(function(product){ 
-        return product.confidence_level == 'High';
+        return product.status == 1;
       });
     } else if (status == 'audit') {
       var filtered = products.filter(function(product){ 
-        return product.confidence_level == 'Low';
+        return product.status == 0;
       });
     } else {
       return products
