@@ -68,11 +68,11 @@ const Dashboard = () => {
     }}
   );
 
-  React.useEffect(() => {
-    let promise = DetectionService.fetchAllDetection();
-    // let promise = DetectionService.fetchDetectionByDate("25-01-2022");
-    promise.then((data) => setData(data));
-  })
+  // React.useEffect(() => {
+  //   let promise = DetectionService.fetchAllDetection();
+  //   // let promise = DetectionService.fetchDetectionByDate("25-01-2022");
+  //   promise.then((data) => setData(data));
+  // })
   let dataProduct = products;
   // let detection = getProductDetectionList(data);
 

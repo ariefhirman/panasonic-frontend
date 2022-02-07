@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-const API_URL = 'http://localhost:8080/api/v1/detection';
+const API_URL = 'http://localhost:6868/api/v1/detection';
 
 class DetectionService {
   fetchDetectionByRackID(rackID) {
