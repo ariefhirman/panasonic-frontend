@@ -93,7 +93,7 @@ export const ProductScannedToolbar = (props) => {
               backgroundColor: '#252F3A'
             }}
           >
-            Success
+            High
           </ToggleButton>
           <ToggleButton 
             value="audit" 
@@ -102,7 +102,7 @@ export const ProductScannedToolbar = (props) => {
               backgroundColor: '#252F3A'
             }}
           >
-            Audit
+            Low
           </ToggleButton>
         </StyledToggleButtonGroup>
       </Box>
@@ -128,7 +128,7 @@ export const ProductScannedToolbar = (props) => {
             }}
             
           >
-            All Status
+            Table
           </ToggleButton>
           <ToggleButton 
             value={false} 
@@ -137,7 +137,7 @@ export const ProductScannedToolbar = (props) => {
               backgroundColor: '#252F3A'
             }}
           >
-            Abort
+            Map
           </ToggleButton>
         </StyledToggleButtonGroup>
         <Button

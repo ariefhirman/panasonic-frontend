@@ -16,6 +16,7 @@ import { ProductScannedList } from 'src/components/dashboard/overview/product-sc
 import { ProductScannedToolbar } from 'src/components/dashboard/overview/product-scanned-toolbar';
 import { products } from '../__mocks__/products';
 import AuthService from 'src/service/auth.service';
+import DetectionService from 'src/service/detection.service';
 
 const getLayoutState = (products, state) => {
   for (let i in products) {
@@ -25,11 +26,6 @@ const getLayoutState = (products, state) => {
       state.success.push(parseInt(products[i].segment.slice(1)))
     }
   }
-}
-
-const topic = {
-  drone_name: 'model/name',
-  drone_connection: 'status/connection',
 }
 
 const Dashboard = () => {
@@ -45,6 +41,8 @@ const Dashboard = () => {
   const [statusTable, setStatusTable] = React.useState('')
   const [tableLayout, setTableLayout] = React.useState(true);
 
+  let data;
+
   React.useEffect(() => {
     let isUser = AuthService.getCurrentUser();
     if(!isUser) {
@@ -53,6 +51,11 @@ const Dashboard = () => {
       // pindah kalo udh login
     }}
   );
+
+  React.useEffect(() => {
+    let detectionData = DetectionService.fetchDetectionByStatus(1);
+    console.log(detectionData);
+  })
 
   let dataProduct = products;
 

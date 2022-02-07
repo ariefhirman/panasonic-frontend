@@ -8,6 +8,7 @@ import { ItemMatrixConfig } from 'src/components/item/item-matrix-config';
 import mqttClientContext from 'src/context/mqttContext';
 import droneArrangementContext from 'src/context/mission-config/droneArrangementContext';
 import AuthService from 'src/service/auth.service';
+import ConfigService from 'src/service/config.service';
 
 // topic for mission config
 const topicConfig = {
@@ -21,6 +22,7 @@ const topicConfig = {
 
 // topic for starting mission
 const topicStartMission = 'mission-planner/start';
+const resMessage = 'Mission Started';
 
 // variables for POST config
 const widthType15 = 2.7;
@@ -29,16 +31,15 @@ const level_height_type15 = [
 ];
 
 const MissionConfig = () => {
+  var uuid = require("uuid");
   const router = useRouter();
-  // const [mesg, setMesg] = React.useState('Test');
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [startMission, setStartMission] = React.useState(false);
   const [sweepConfig, setSweepConfig] = React.useState();
-  const [rackSize, setRackSize] = React.useState();
+  const [droneConfig, setDroneConfig] = React.useState();
   const client = React.useContext(mqttClientContext);
-  // let note;
   console.log(client);
 
   // subscibe
@@ -54,62 +55,134 @@ const MissionConfig = () => {
 
   const fillRackSizeArray = (sweepConfig) => {
     let arrRackSize = [];
-    console.log(sweepConfig);
-    for(let i=0; i < sweepConfig[sweepConfig.length-1]; i++) {
-      let configRackSize = {};
-      configRackSize["width"] = widthType15;
-      console.log(sweepConfig.includes(i+1));
-      if (sweepConfig.includes(i+1)) {
-        configRackSize["level_height"] = level_height_type15;
-      } else {
-        configRackSize["level_height"] = [];
-      }
-      arrRackSize.push(configRackSize)
-      console.log(configRackSize);
-    };
-    console.log(arrRackSize);
+    if (sweepConfig) {
+      for(let i=0; i < sweepConfig[sweepConfig.length-1]; i++) {
+        let configRackSize = {};
+        configRackSize["width"] = widthType15;
+        console.log(sweepConfig.includes(i+1));
+        if (sweepConfig.includes(i+1)) {
+          configRackSize["level_height"] = level_height_type15;
+        } else {
+          configRackSize["level_height"] = [];
+        }
+        arrRackSize.push(configRackSize)
+      };
+    }
     return arrRackSize;
   }
 
-  if (startMission) {
-    let arrRackSize = fillRackSizeArray(sweepConfig);
-    client.publish(topicStartMission, 'True', { qos: 1, retain: false }, function (error) {
+  const getRackID = (num) => {
+    let prefix;
+    let numPrefix = (num / 18) >> 0;
+    let numSuffix = num % 17;
+    if (numSuffix == 0) {
+      numSuffix = 17;
+    }
+    switch(numPrefix) {
+      case 0:
+        prefix = 'A';
+        break;
+      case 1:
+        prefix = 'B';
+        break;
+      case 2:
+        prefix = 'C';
+        break;
+      case 3:
+        prefix = 'D';
+        break;
+      case 4:
+        prefix = 'E';
+        break;
+      case 5:
+        prefix = 'F';
+        break;
+    }
+    return prefix + numSuffix.toString();
+  };
+
+  const getArrayRackID = (sweep) => {
+    let arr = [];
+    console.log(sweep);
+    sweep.forEach(el => 
+      // console.log(getRackID(el))
+      arr.push(getRackID(el))
+    );
+    console.log(arr);
+    return arr;
+  }
+
+  const publishMessage = (topic, message, resMessage) => {
+    client.publish(topic, message, { qos: 1, retain: false }, function (error) {
       if (error) {
         console.log(error)
       } else {
-        console.log('Published')
+        console.log('Message Published: ' + resMessage)
       }
     })
-    setStartMission(false)
-  }
-
-  const publishMessage = (topic) => {
-    if (startMission) {
-      client.publish(topic, 'True', { qos: 1, retain: false }, function (error) {
-        if (error) {
-          console.log(error)
-        } else {
-          console.log('Published')
-        }
-      })
-    }
-    setStartMission(false)
   }
 
   const handleCallbackStatus = (data) => {
     setStartMission(data);
   }
 
+  const handleCallbackDroneConfig = (data) => {
+    setDroneConfig(data);
+  }
+
   const handleCallbackSweepConfig = (data) => {
-    // if (listBox.includes(data)) {
-    //   return;
-    // }
-    // // listBox.push(boxSelected);
-    // listBox.push(data);
     setSweepConfig(data);
-    // props.parentcallback(listBox);
-    console.log(data);
   };
+
+  if (startMission) {
+    let dataConfig = {};
+    let arrRackSize = fillRackSizeArray(sweepConfig);
+    let arrRackID = getArrayRackID(sweepConfig);
+    publishMessage(topicStartMission, 'True', resMessage);
+    if (droneConfig) {
+        dataConfig = {
+        id: uuid.v4(),
+        mission_name: droneConfig.missionName,
+        drone_name: droneName,
+        start_point: arrRackID[0], // will be implemented rack ID array
+        end_point: arrRackID[arrRackID.length-1], // will be implemented rack ID array
+        mission_speed: parseFloat(droneConfig.missionSpeed),
+        max_altitude: parseFloat(droneConfig.maxAltitude),
+        rack_ids: arrRackID,
+        sweep_config: sweepConfig,
+        rack_size: arrRackSize
+      };
+    } else {
+      dataConfig = {
+        id: uuid.v4(),
+        mission_name: '',
+        drone_name: droneName,
+        start_point: arrRackID[0],
+        end_point: arrRackID[arrRackID.length-1],
+        mission_speed: 0,
+        max_altitude: 0,
+        rack_ids: arrRackID,
+        sweep_config: sweepConfig,
+        rack_size: arrRackSize
+      };
+    }
+    ConfigService.postConfig(dataConfig).then(
+      () => {
+        console.log("Success post data");
+      },
+      error => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(error.message);
+      }
+    );
+    console.log(dataConfig);
+    setStartMission(false)
+  }
 
   let note;
   React.useEffect(() => {
@@ -175,7 +248,7 @@ const MissionConfig = () => {
             xs={12}
           >
             <droneArrangementContext.Provider value={arrangementContext}>
-              <DroneArrangement parentcallback={handleCallbackStatus} sx={{ height: '100%' }} />
+              <DroneArrangement callbackconfig={handleCallbackDroneConfig} parentcallback={handleCallbackStatus} sx={{ height: '100%' }} />
             </droneArrangementContext.Provider>
           </Grid>
         </Grid>

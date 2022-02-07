@@ -23,9 +23,14 @@ const topicProgress = {
   drone_horizontal_speed: 'dji/status/horizontal-speed'
 }
 
+// topic for stopping mission
+const topicStopMission = 'mission-planner/stop';
+const resMessage = 'Mission Stopped';
+
 const CheckProgress = () => {
   const router = useRouter();
   const [progress, SetProgress] = React.useState(initialState);
+  const [stopMission, setStopMission] = React.useState(false);
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
@@ -52,6 +57,21 @@ const CheckProgress = () => {
     vertical_speed: verticalSpeed,
     horizontal_speed: horizontalSpeed 
   };
+
+  const handleCallbackStatus = (data) => {
+    console.log(data);
+    setStopMission(data);
+  }
+
+  const publishMessage = (topic, message, resMessage) => {
+    client.publish(topic, message, { qos: 1, retain: false }, function (error) {
+      if (error) {
+        console.log(error)
+      } else {
+        console.log('Message Published: ' + resMessage)
+      }
+    })
+  }
 
   let note;
   React.useEffect(() => {
@@ -88,6 +108,11 @@ const CheckProgress = () => {
       // pindah kalo udh login
     }}
   );
+  
+  if (stopMission) {
+    publishMessage(topicStopMission, 'False', resMessage);
+    setStopMission(false)
+  }
 
   return (
     <>
@@ -126,7 +151,7 @@ const CheckProgress = () => {
               xs={12}
             >
               <progressInfoContext.Provider value={droneInformation}>
-                <DroneInformation data={progress} sx={{ height: '100%' }} />
+                <DroneInformation parentcallback={handleCallbackStatus} data={progress} sx={{ height: '100%' }} />
               </progressInfoContext.Provider>
             </Grid>
           </Grid>

@@ -9,25 +9,29 @@ import droneArrangementContext from 'src/context/mission-config/droneArrangement
 export const DroneArrangement = (props) => {
   const router = useRouter();
   const theme = useTheme();
-  const [age, setAge] = React.useState('');
+  const [missionName, setMissionName] = React.useState('');
+  const [maxAltitude, setMaxAltitude] = React.useState(0);
+  const [missionSpeed, setMissionSpeed] = React.useState(0);
   const [startMission, setStartMission] = React.useState(false);
 
   const data = React.useContext(droneArrangementContext);
   console.log(data);
 
   const handleStatus = (event) => {
+    let configData = {
+      missionName: missionName,
+      missionSpeed: missionSpeed,
+      maxAltitude: maxAltitude
+    }
     setStartMission(true);
     props.parentcallback(true);
+    props.callbackconfig(configData);
   };
 
   let connectionColor = "#F00";
   if (data.connection_status == 'Connected' || data.connection_status == 'connected') {
     connectionColor = "#11AC92"
   }
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
 
   return (
     <Card {...props}
@@ -164,6 +168,39 @@ export const DroneArrangement = (props) => {
           }}
         >
           <Grid container>
+          <Grid item
+              lg={8}
+              md={8}
+              sm={12}
+              sx={{ marginBottom: '2em'}}
+            >
+              <Typography
+                color="#B4BEDA"
+                variant="caption"
+              >
+                Mission Name
+              </Typography>
+            </Grid>
+            <Grid item
+              lg={4}
+              md={4}
+              sm={12}
+            >
+              <TextField
+                  onChange={
+                    (event) => {setMissionName(event.target.value)}
+                  }
+                  color='secondary'
+                  name="mission-name"
+                  type="text"
+                  sx={{ 
+                    input: { color: '#FFF' },
+                    width: '7em',
+                    marginRight: '0.5em',
+                 }}
+                 size="small"
+              />
+            </Grid>
             <Grid item
               lg={8}
               md={8}
@@ -183,6 +220,9 @@ export const DroneArrangement = (props) => {
               sm={12}
             >
               <TextField
+                  onChange={
+                    (event) => {setMissionSpeed(event.target.value)}
+                  }
                   color='secondary'
                   name="mission-speed"
                   type="text"
@@ -220,8 +260,11 @@ export const DroneArrangement = (props) => {
               sx={{ marginBottom: '2em'}}
             >
               <TextField
+                  onChange={
+                    (event) => {setMaxAltitude(event.target.value)}
+                  }
                   color='secondary'
-                  name="mission-speed"
+                  name="max-altitude"
                   type="text"
                   sx={{ 
                     input: { color: '#FFF' },

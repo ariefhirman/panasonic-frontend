@@ -1,21 +1,52 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-const API_URL = 'https://ariefhirmanto.xyz/api/map/';
+const API_URL = 'http://localhost:8080/api/v1/config';
 
-class MapService {
-  fetchAllMap() {
-    return axios.get(API_URL, { headers: authHeader() })
+class ConfigService {
+  postConfig(config) {
+    return axios
+      .post(API_URL, {
+        id: config.id,
+        mission_name: config.mission_name,
+        drone_name: config.drone_name,
+        start_point: config.start_point,
+        end_point: config.end_point,
+        mission_speed: config.mission_speed,
+        max_altitude: config.max_altitude,
+        rack_ids: config.rack_ids,
+        sweep_config: config.sweep_config,
+        rack_size: config.rack_size
+      }, { headers: authHeader() })
+      .then(response => {
+        if (response.data.accessToken) {
+          localStorage.setItem("newConfig", JSON.stringify(response.data));
+        }
+        console.log(response.data);
+        return response.data;
+      });
+  }
+
+  fetchLatestConfig() {
+    return axios.get(API_URL + '/latest', { headers: authHeader() })
     .then(response => {
-        localStorage.setItem("map", JSON.stringify(response.data));
+        localStorage.setItem("latestConfig", JSON.stringify(response.data));
       }
     );
   }
 
-  fetchSpecificMap(node_owner) {
-    return axios.get(API_URL + node_owner, { headers: authHeader() })
+  fetchAllConfig() {
+    return axios.get(API_URL, { headers: authHeader() })
     .then(response => {
-        localStorage.setItem("map", JSON.stringify(response.data));
+        localStorage.setItem("allConfig", JSON.stringify(response.data));
+      }
+    );
+  }
+
+  fetchConfigByMissionID(missionID) {
+    return axios.get(API_URL + missionID, { headers: authHeader() })
+    .then(response => {
+        localStorage.setItem("config", JSON.stringify(response.data));
       }
     );
   }
@@ -25,4 +56,4 @@ class MapService {
   }
 }
 
-export default new MapService();
+export default new ConfigService();

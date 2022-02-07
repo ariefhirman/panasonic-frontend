@@ -32,7 +32,13 @@ export const DroneInformation = (props) => {
   const theme = useTheme();
   const [progress, setProgress] = React.useState(0);
   const [dataStatus, setDataStatus] = React.useState(props.data);
+  const [stopMission, setStopMission] = React.useState(false);
   const data = React.useContext(progressInfoContext);
+
+  const handleStatus = () => {
+    setStopMission(true);
+    props.parentcallback(true);
+  };
 
   let connectionColor = "#F00";
   if (data.connection_status == 'Connected' || data.connection_status == 'connected') {
@@ -356,6 +362,7 @@ export const DroneInformation = (props) => {
                         backgroundColor: '#9c2a2a'
                       }
                     }}
+                    onClick={handleStatus}
                   >
                     <StopIcon />
                   </Fab>

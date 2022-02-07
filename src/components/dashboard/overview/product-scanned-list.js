@@ -118,11 +118,11 @@ export const ProductScannedList = ({ products, ...rest }) => {
                     Segment
                   </Typography>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Typography color="#FFF" variant="body">
                     Floor
                   </Typography>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Typography color="#FFF" variant="body">
                     Product Code
@@ -185,11 +185,11 @@ export const ProductScannedList = ({ products, ...rest }) => {
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography color="#FFF" variant="caption">
                       {product.floor}
                     </Typography>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     {/* <Typography color="#FFF" variant="caption">
                       {`${product.address.city}, ${product.address.state}, ${product.address.country}`}
