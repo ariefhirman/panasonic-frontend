@@ -21,7 +21,7 @@ export const DashboardLayout = (props) => {
     username: 'admin',
     password: '1234',	
   };
-  var client  = mqtt.connect('mqtt://localhost:9005');
+  var client  = mqtt.connect('mqtt://localhost:9005', options);
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [mqttClient, setMqttClient] = useState(client);
