@@ -17,18 +17,14 @@ const DashboardLayoutRoot = styled('div')(({ theme }) => ({
 
 export const DashboardLayout = (props) => {
   var mqtt    = require('mqtt');
+  var options = {
+    username: 'admin',
+    password: '1234',	
+  };
   var client  = mqtt.connect('mqtt://localhost:9005');
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [mqttClient, setMqttClient] = useState(client);
-
-  
-  // var options = {
-    // protocol: 'mqtt',
-    // clientId uniquely identifies client
-    // choose any string you wish
-    // clientId: 'b0908853' 	
-  // };
 
   return (
     <>
