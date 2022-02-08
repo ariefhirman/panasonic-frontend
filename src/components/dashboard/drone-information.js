@@ -41,7 +41,7 @@ export const DroneInformation = (props) => {
   };
 
   let connectionColor = "#F00";
-  if (data.connection_status == 'Connected' || data.connection_status == 'connected') {
+  if (data.connection_status == 'True' || data.connection_status == 'true') {
     connectionColor = "#11AC92"
   }
 
