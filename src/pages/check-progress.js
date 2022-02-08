@@ -111,11 +111,7 @@ const CheckProgress = () => {
   
   if (stopMission) {
     publishMessage(topicStopMission, 'true', resMessage);
-    setStopMission(true)
-  } else {
-    publishMessage(topicStopMission, 'false', resMessage);
-    setStopMission(false)
-  }
+  } 
 
   return (
     <>
