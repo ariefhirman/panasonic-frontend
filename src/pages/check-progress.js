@@ -24,7 +24,7 @@ const topicProgress = {
 }
 
 // topic for stopping mission
-const topicStopMission = 'mission-planner/stop';
+const topicStopMission = 'mission-planner/pause';
 const resMessage = 'Mission Stopped';
 
 const CheckProgress = () => {
@@ -110,7 +110,10 @@ const CheckProgress = () => {
   );
   
   if (stopMission) {
-    publishMessage(topicStopMission, 'False', resMessage);
+    publishMessage(topicStopMission, 'true', resMessage);
+    setStopMission(true)
+  } else {
+    publishMessage(topicStopMission, 'false', resMessage);
     setStopMission(false)
   }
 
