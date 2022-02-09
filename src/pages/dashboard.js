@@ -61,12 +61,13 @@ const Dashboard = () => {
   //   }
   // }
 
-  React.useEffect(() => {
-    let isUser = AuthService.getCurrentUser();
-    if(!isUser) {
-      router.push('/');
-    }}
-  );
+  // checking login
+  // React.useEffect(() => {
+  //   let isUser = AuthService.getCurrentUser();
+  //   if(!isUser) {
+  //     router.push('/');
+  //   }}
+  // );
 
   // React.useEffect(() => {
   //   let promise = DetectionService.fetchAllDetection();

@@ -38,26 +38,25 @@ const Login = () => {
           'Password is required')
     }),
     onSubmit: (values, { resetForm }) => {
-      console.log(values);
-      // router.push('/dashboard');
-      AuthService.login(values.email, values.password).then(
-        () => {
-          // const userData = AuthService.getCurrentUser();
-          router.push('/dashboard');
-          // navigate('/app/data', { replace: true, state: { node_id: data_node } });
-          // window.location.reload();
-        },
-        error => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          console.log(error.message);
-          resetForm();
-        }
-      );
+      router.push('/dashboard');
+      // AuthService.login(values.email, values.password).then(
+      //   () => {
+      //     // const userData = AuthService.getCurrentUser();
+      //     router.push('/dashboard');
+      //     // navigate('/app/data', { replace: true, state: { node_id: data_node } });
+      //     // window.location.reload();
+      //   },
+      //   error => {
+      //     const resMessage =
+      //       (error.response &&
+      //         error.response.data &&
+      //         error.response.data.message) ||
+      //       error.message ||
+      //       error.toString();
+      //     console.log(error.message);
+      //     resetForm();
+      //   }
+      // );
     }
   });
 

@@ -202,14 +202,14 @@ const MissionConfig = () => {
     });
   });
 
-  React.useEffect(() => {
-    let isUser = AuthService.getCurrentUser();
-    if(!isUser) {
-      router.push('/');
-      // navigate('/app/data');
-      // pindah kalo udh login
-    }}
-  );
+  // React.useEffect(() => {
+  //   let isUser = AuthService.getCurrentUser();
+  //   if(!isUser) {
+  //     router.push('/');
+  //     // navigate('/app/data');
+  //     // pindah kalo udh login
+  //   }}
+  // );
 
   return (
     <>

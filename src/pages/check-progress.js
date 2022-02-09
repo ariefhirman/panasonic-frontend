@@ -100,14 +100,15 @@ const CheckProgress = () => {
     });
   });
 
-  React.useEffect(() => {
-    let isUser = AuthService.getCurrentUser();
-    if(!isUser) {
-      router.push('/');
-      // navigate('/app/data');
-      // pindah kalo udh login
-    }}
-  );
+  // checking login
+  // React.useEffect(() => {
+  //   let isUser = AuthService.getCurrentUser();
+  //   if(!isUser) {
+  //     router.push('/');
+  //     // navigate('/app/data');
+  //     // pindah kalo udh login
+  //   }}
+  // );
   
   if (stopMission) {
     publishMessage(topicStopMission, 'true', resMessage);

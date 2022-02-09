@@ -29,7 +29,7 @@ export const DroneArrangement = (props) => {
   };
 
   let connectionColor = "#F00";
-  if (data.connection_status == 'Connected' || data.connection_status == 'connected') {
+  if (data.connection_status == 'True' || data.connection_status == 'true') {
     connectionColor = "#11AC92"
   }
 
@@ -277,7 +277,7 @@ export const DroneArrangement = (props) => {
                 color="#B4BEDA"
                 variant="caption"
               >
-                m/s
+                m
               </Typography>
             </Grid>
             {/* <Grid item
