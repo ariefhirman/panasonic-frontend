@@ -39,12 +39,7 @@ const items = [
     href: '/account',
     icon: (<UserIcon fontSize="small" />),
     title: 'Account'
-  },
-  {
-    href: '/check-grid',
-    icon: (<UserIcon fontSize="small" />),
-    title: 'Grid'
-  },
+  }
   // {
   //   href: '/product-details',
   //   icon: (<UserIcon fontSize="small" />),

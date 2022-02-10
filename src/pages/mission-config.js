@@ -17,11 +17,13 @@ const topicConfig = {
   drone_battery: 'dji/status/battery',
   drone_altitude: 'dji/status/altitude',
   drone_vertical_speed: 'dji/status/vertical-speed',
-  drone_horizontal_speed: 'dji/status/horizontal-speed'
+  drone_horizontal_speed: 'dji/status/horizontal-speed',
+  drone_flight_control: 'dji/status/flight-control'
 };
 
 // topic for starting mission
 const topicStartMission = 'mission-planner/start';
+const topicMissionStarted = 'mission-planner/start/result';
 const resMessage = 'Mission Started';
 
 // variables for POST config
@@ -39,6 +41,7 @@ const MissionConfig = () => {
   const [startMission, setStartMission] = React.useState(false);
   const [sweepConfig, setSweepConfig] = React.useState();
   const [droneConfig, setDroneConfig] = React.useState();
+  const [flightControl, setFlightControl] = React.useState('False');
   const client = React.useContext(mqttClientContext);
   console.log(client);
 
@@ -50,17 +53,18 @@ const MissionConfig = () => {
   const arrangementContext = {
     drone_name: droneName,
     connection_status: connectionStatus,
-    battery_level: batteryLevel
+    battery_level: batteryLevel,
+    flight_control: flightControl
   };
 
   const fillRackSizeArray = (sweepConfig) => {
     let arrRackSize = [];
     if (sweepConfig) {
-      for(let i=0; i < sweepConfig[sweepConfig.length-1]; i++) {
+      for(let i=sweepConfig[0]; i <= sweepConfig[sweepConfig.length-1]; i++) {
         let configRackSize = {};
         configRackSize["width"] = widthType15;
-        console.log(sweepConfig.includes(i+1));
-        if (sweepConfig.includes(i+1)) {
+        console.log(sweepConfig.includes(i));
+        if (sweepConfig.includes(i)) {
           configRackSize["level_height"] = level_height_type15;
         } else {
           configRackSize["level_height"] = [];
@@ -196,6 +200,15 @@ const MissionConfig = () => {
       } else if (topic == topicConfig.drone_battery) {
         note = message.toString();
         setBatteryLevel(note);
+      } else if (topic == topicConfig.drone_flight_control) {
+        note = message.toString();
+        setFlightControl(note);
+      } else if (topic == topicMissionStarted) {
+        note = message.toString();
+        if (note == 'started') {
+          router.push('/success-launched');
+        }
+        setFlightControl(note);
       }
       console.log(note);
       // client.end();

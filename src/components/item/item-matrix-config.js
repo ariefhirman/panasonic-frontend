@@ -1,6 +1,9 @@
 import React from "react"
 import { Box, Button, Card, Grid, Typography } from '@mui/material';
 import ItemBoxConfig from './item-config'
+import { styled } from '@mui/material/styles';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 let listBox = [];
 let rackSize = [];
@@ -9,18 +12,55 @@ const level_height = [
   1.225, 1.05, 1.06
 ];
 
+// const emptyBox = [
+//   25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
+// ]
+
 const emptyBox = [
-  25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
+  1,26,43,52,53,59,66,67,68,69,70,76,83,84,85,96
 ]
+
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  '& .MuiToggleButtonGroup-grouped': {
+    margin: theme.spacing(0.5),
+    textTransform: 'none',
+    color: '#FFF',
+    border: 0,
+    '&.Mui-selected': {
+      border: 0,
+      backgroundColor: '#397BBB'
+    },
+    '&.Mui-disabled': {
+      border: 0,
+    },
+    '&:not(:first-of-type)': {
+      borderRadius: theme.shape.borderRadius,
+    },
+    '&:first-of-type': {
+      borderRadius: theme.shape.borderRadius,
+    },
+  },
+}));
 
 export const ItemMatrixConfig = (props) => {
   const [boxSelected, setBoxSelected] = React.useState([]);
+  const [layoutConfig, setLayoutConfig] = React.useState('right-layout');
 
   const resetConfigHandler = () => {
     setBoxSelected([]);
     listBox = [];
     window.location.reload(); 
   }
+
+  const handleLayout = (event, newStatus) => {
+    if (newStatus !== null) {
+      setLayoutConfig(newStatus);
+      // props.parentCallbackStatus(newStatus);
+    }
+    // } else {
+      // props.parentCallbackStatus(statusProduct);
+    // }
+  };
 
   const handleCallback = (data) => {
     if (listBox.includes(data)) {
@@ -69,7 +109,15 @@ export const ItemMatrixConfig = (props) => {
     }
   }
   
-  const GenerateRows = (boxNumbers) => {
+  const GenerateRows = (arrNumber) => {
+    console.log(layoutConfig);
+    let boxNumbers = arrNumber.reverse();
+    if (layoutConfig != 'right-layout') {
+      console.log('test');
+      boxNumbers = boxNumbers.reverse();
+    } 
+    // let boxNumbers = arrNumber;
+    // console.log(boxNumbers);
     return (
       <>
         {
@@ -104,6 +152,53 @@ export const ItemMatrixConfig = (props) => {
         border: "1px solid #646A7B"
       }}
     >
+    <Card
+      sx={{
+        backgroundColor: '#252F3A',
+        marginTop: '2em', marginLeft: '2em', marginRight: '2em',
+        display: 'flex'
+        // border: "1px solid #646A7B"
+      }}
+    >
+      <Grid item sx={{
+        marginTop: '1em', 
+        marginLeft: '2em', 
+        marginBottom: '1em',
+      }}>
+        <Typography 
+          color="#FFF" 
+          variant="subtitle1"
+        >
+          Layout
+        </Typography>
+        <StyledToggleButtonGroup
+          size="small"
+          value={layoutConfig}
+          exclusive
+          onChange={handleLayout}
+          aria-label="layout"
+        >
+          <ToggleButton 
+            value="left-layout" 
+            aria-label="left-layout"
+            sx={{
+              backgroundColor: '#252F3A'
+            }}
+          >
+            Left
+          </ToggleButton>
+          <ToggleButton 
+            value="right-layout" 
+            aria-label="right-layout"
+            sx={{
+              backgroundColor: '#252F3A'
+            }}
+          >
+            Right
+          </ToggleButton>
+        </StyledToggleButtonGroup>
+      </Grid>
+    </Card>  
     <div style={{ marginTop: '2em', marginLeft: '3em', marginBottom: '2em', marginRight: '3em'}}>
       <Box 
         sx={{ 

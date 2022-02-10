@@ -32,6 +32,10 @@ export const DroneArrangement = (props) => {
   if (data.connection_status == 'True' || data.connection_status == 'true') {
     connectionColor = "#11AC92"
   }
+  let flightControlColor = "#11AC92";
+  if (data.flight_control == 'False' || data.flight_control == 'false') {
+    flightControlColor = "#F00";
+  }
 
   return (
     <Card {...props}
@@ -126,6 +130,28 @@ export const DroneArrangement = (props) => {
                     color={connectionColor} 
                   >
                     {data.connection_status}
+                  </Typography>
+                </Grid>
+                <Grid 
+                  item
+                  sx={{
+                    marginTop: '0.5em'
+                  }}
+                >
+                  <Typography 
+                    color="#646A7B"
+                    variant="subtitle2"
+                    gutterBottom
+                  >
+                    Flight Control
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography 
+                    variant="subtitle1"
+                    color={flightControlColor} 
+                  >
+                    {data.flight_control}
                   </Typography>
                 </Grid>
                 <Grid 
