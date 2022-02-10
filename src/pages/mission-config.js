@@ -49,6 +49,8 @@ const MissionConfig = () => {
   client.subscribe(topicConfig.drone_name);
   client.subscribe(topicConfig.drone_connection);
   client.subscribe(topicConfig.drone_battery);
+  client.subscribe(topicConfig.drone_flight_control);
+  client.subscribe(topicMissionStarted);
 
   const arrangementContext = {
     drone_name: droneName,
@@ -208,7 +210,6 @@ const MissionConfig = () => {
         if (note == 'started') {
           router.push('/success-launched');
         }
-        setFlightControl(note);
       }
       console.log(note);
       // client.end();
