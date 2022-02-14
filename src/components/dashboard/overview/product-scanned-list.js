@@ -90,7 +90,7 @@ export const ProductScannedList = ({ products, ...rest }) => {
   return (
     <Card {...rest} sx={{ margin: '2em', marginTop: '1em'}}>
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box sx={{ minWidth: 920 }}>
           <Table sx={{
             backgroundColor: 'neutral.900',
             border: "1px solid #646A7B"

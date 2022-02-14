@@ -6,25 +6,12 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import { DroneArrangement } from 'src/components/dashboard/drone-arrangement';
 import { ItemMatrixConfig } from 'src/components/item/item-matrix-config';
 import mqttClientContext from 'src/context/mqttContext';
+import topicMqttContext from 'src/context/topicContext';
 import droneArrangementContext from 'src/context/mission-config/droneArrangementContext';
 import Modal from '@mui/material/Modal';
 import AuthService from 'src/service/auth.service';
 import ConfigService from 'src/service/config.service';
 
-// topic for mission config
-const topicConfig = {
-  drone_name: 'dji/model/name',
-  drone_connection: 'dji/status/connection',
-  drone_battery: 'dji/status/battery',
-  drone_altitude: 'dji/status/altitude',
-  drone_vertical_speed: 'dji/status/vertical-speed',
-  drone_horizontal_speed: 'dji/status/horizontal-speed',
-  drone_flight_control: 'dji/status/flight-control'
-};
-
-// topic for starting mission
-const topicStartMission = 'mission-planner/start';
-const topicMissionStarted = 'mission-planner/start/result';
 const resMessage = 'Mission Started';
 
 // variables for POST config
@@ -60,14 +47,14 @@ const MissionConfig = () => {
   const [flightControl, setFlightControl] = React.useState('False');
   const [openPopup, setOpenPopup] = React.useState(false);
   const client = React.useContext(mqttClientContext);
-  console.log(client);
-
+  const topic = React.useContext(topicMqttContext)
+  
   // subscibe
-  client.subscribe(topicConfig.drone_name);
-  client.subscribe(topicConfig.drone_connection);
-  client.subscribe(topicConfig.drone_battery);
-  client.subscribe(topicConfig.drone_flight_control);
-  client.subscribe(topicMissionStarted);
+  client.subscribe(topic.topicConfig.drone_name);
+  client.subscribe(topic.topicConfig.drone_connection);
+  client.subscribe(topic.topicConfig.drone_battery);
+  client.subscribe(topic.topicConfig.drone_flight_control);
+  client.subscribe(topic.topicMissionStarted);
 
   const arrangementContext = {
     drone_name: droneName,
@@ -167,7 +154,7 @@ const MissionConfig = () => {
     let dataConfig = {};
     let arrRackSize = fillRackSizeArray(sweepConfig);
     let arrRackID = getArrayRackID(sweepConfig);
-    publishMessage(topicStartMission, 'True', resMessage);
+    publishMessage(topic.topicStartMission, 'True', resMessage);
     if (droneConfig) {
         dataConfig = {
         id: uuid.v4(),
@@ -220,19 +207,19 @@ const MissionConfig = () => {
   let note;
   React.useEffect(() => {
     client.on('message', function (topic, message) {
-      if (topic == topicConfig.drone_name) {
+      if (topic == topic.topicConfig.drone_name) {
         note = message.toString();
         setDroneName(note);
-      } else if (topic == topicConfig.drone_connection) {
+      } else if (topic == topic.topicConfig.drone_connection) {
         note = message.toString();
         setConnectionStatus(note);
-      } else if (topic == topicConfig.drone_battery) {
+      } else if (topic == topic.topicConfig.drone_battery) {
         note = message.toString();
         setBatteryLevel(note);
-      } else if (topic == topicConfig.drone_flight_control) {
+      } else if (topic == topic.topicConfig.drone_flight_control) {
         note = message.toString();
         setFlightControl(note);
-      } else if (topic == topicMissionStarted) {
+      } else if (topic == topic.topicMissionStarted) {
         note = message.toString();
         if (note == 'started' || note == 'Started') {
           setOpenPopup(true);

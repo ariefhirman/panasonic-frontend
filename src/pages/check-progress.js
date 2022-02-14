@@ -6,6 +6,7 @@ import { DroneInformation } from '../components/dashboard/drone-information';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { ItemMatrixProgress } from 'src/components/item/item-matrix-progress';
 import mqttClientContext from 'src/context/mqttContext';
+import topicMqttContext from 'src/context/topicContext';
 import progressInfoContext from 'src/context/check-progress/progressInfoContext';
 import AuthService from 'src/service/auth.service';
 
@@ -14,17 +15,6 @@ const initialState =  {
   audited: [5,8]
 }
 
-const topicProgress = {
-  drone_name: 'dji/model/name',
-  drone_connection: 'dji/status/connection',
-  drone_battery: 'dji/status/battery',
-  drone_altitude: 'dji/status/altitude',
-  drone_vertical_speed: 'dji/status/vertical-speed',
-  drone_horizontal_speed: 'dji/status/horizontal-speed'
-}
-
-// topic for stopping mission
-const topicStopMission = 'mission-planner/pause';
 const resMessage = 'Mission Stopped';
 
 const CheckProgress = () => {
@@ -38,16 +28,15 @@ const CheckProgress = () => {
   const [verticalSpeed, setVerticalSpeed] = React.useState('0');
   const [horizontalSpeed, setHorizontalSpeed] = React.useState('0');
   const client = React.useContext(mqttClientContext);
-  // let note;
-  console.log(client);
+  const mqttTopic = React.useContext(topicMqttContext)
 
   // subscibe
-  client.subscribe(topicProgress.drone_name);
-  client.subscribe(topicProgress.drone_connection);
-  client.subscribe(topicProgress.drone_battery);
-  client.subscribe(topicProgress.drone_altitude);
-  client.subscribe(topicProgress.drone_vertical_speed);
-  client.subscribe(topicProgress.drone_horizontal_speed);
+  client.subscribe(mqttTopic.topicConfig.drone_name);
+  client.subscribe(mqttTopic.topicConfig.drone_connection);
+  client.subscribe(mqttTopic.topicConfig.drone_battery);
+  client.subscribe(mqttTopic.topicConfig.drone_altitude);
+  client.subscribe(mqttTopic.topicConfig.drone_vertical_speed);
+  client.subscribe(mqttTopic.topicConfig.drone_horizontal_speed);
 
   const droneInformation = {
     drone_name: droneName,
@@ -76,22 +65,22 @@ const CheckProgress = () => {
   let note;
   React.useEffect(() => {
     client.on('message', function (topic, message) {
-      if (topic == topicProgress.drone_name) {
+      if (topic == mqttTopic.topicConfig.drone_name) {
         note = message.toString();
         setDroneName(note);
-      } else if (topic == topicProgress.drone_connection) {
+      } else if (topic == mqttTopic.topicConfig.drone_connection) {
         note = message.toString();
         setConnectionStatus(note);
-      } else if (topic == topicProgress.drone_battery) {
+      } else if (topic == mqttTopic.topicConfig.drone_battery) {
         note = message.toString();
         setBatteryLevel(note);
-      } else if (topic == topicProgress.drone_altitude) {
+      } else if (topic == mqttTopic.topicConfig.drone_altitude) {
         note = message.toString();
         setAltitude(note);
-      } else if (topic == topicProgress.drone_vertical_speed) {
+      } else if (topic == mqttTopic.topicConfig.drone_vertical_speed) {
         note = message.toString();
         setVerticalSpeed(note);
-      } else if (topic == topicProgress.drone_horizontal_speed) {
+      } else if (topic == mqttTopic.topicConfig.drone_horizontal_speed) {
         note = message.toString();
         setHorizontalSpeed(note);
       } 
@@ -111,7 +100,7 @@ const CheckProgress = () => {
   // );
   
   if (stopMission) {
-    publishMessage(topicStopMission, 'true', resMessage);
+    publishMessage(mqttTopic.topicStopMission, 'true', resMessage);
   } 
 
   return (
