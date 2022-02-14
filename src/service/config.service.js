@@ -14,6 +14,8 @@ class ConfigService {
         end_point: config.end_point,
         mission_speed: config.mission_speed,
         max_altitude: config.max_altitude,
+        min_altitude: config.min_altitude,
+        orientation: config.orientation,
         rack_ids: config.rack_ids,
         sweep_config: config.sweep_config,
         rack_size: config.rack_size

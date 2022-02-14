@@ -16,6 +16,7 @@ import { ProductScannedList } from 'src/components/dashboard/overview/product-sc
 import { ProductScannedToolbar } from 'src/components/dashboard/overview/product-scanned-toolbar';
 import { products } from '../__mocks__/products';
 import AuthService from 'src/service/auth.service';
+import ConfigService from 'src/service/config.service';
 import DetectionService from 'src/service/detection.service';
 
 const getLayoutState = (products, state) => {
@@ -69,20 +70,24 @@ const Dashboard = () => {
   //   }}
   // );
 
-  // React.useEffect(() => {
-  //   let promise = DetectionService.fetchAllDetection();
-  //   // let promise = DetectionService.fetchDetectionByDate("25-01-2022");
-  //   promise.then((data) => setData(data));
-  // })
+  React.useEffect(() => {
+    let promise = DetectionService.fetchAllDetection();
+    // let promiseConfig = ConfigService.fetchSeveralLatestConfig(3);
+    // let promise = DetectionService.fetchDetectionByMissionID();
+    // let promise = DetectionService.fetchDetectionByDate("25-01-2022");
+    // promiseConfig.then((data) => setData(data));
+    promise.then((data) => setData(data));
+  })
+  // console.log(data);
   let dataProduct = products;
-  // let detection = getProductDetectionList(data);
+  // getIndexFromRackID(data[0].rack_id);
 
   const filterProduct = (products, status) => {
-    if (status == 'success') {
+    if (status == 1) {
       var filtered = products.filter(function(product){ 
         return product.status == 1;
       });
-    } else if (status == 'audit') {
+    } else if (status == 0) {
       var filtered = products.filter(function(product){ 
         return product.status == 0;
       });
@@ -90,6 +95,12 @@ const Dashboard = () => {
       return products
     }
     return filtered
+  }
+
+  const getIndexFromRackID = (rackID) => {
+    let rackNumber = rackID.slice(1);
+    console.log(rackNumber);
+    console.log(rackID);
   }
   
   const handleCallbackLayout = (data) => {

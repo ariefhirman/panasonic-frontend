@@ -44,7 +44,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 
 export const ItemMatrixConfig = (props) => {
   const [boxSelected, setBoxSelected] = React.useState([]);
-  const [layoutConfig, setLayoutConfig] = React.useState('right-layout');
+  const [layoutConfig, setLayoutConfig] = React.useState('right');
 
   const resetConfigHandler = () => {
     setBoxSelected([]);
@@ -55,11 +55,10 @@ export const ItemMatrixConfig = (props) => {
   const handleLayout = (event, newStatus) => {
     if (newStatus !== null) {
       setLayoutConfig(newStatus);
-      // props.parentCallbackStatus(newStatus);
-    }
-    // } else {
-      // props.parentCallbackStatus(statusProduct);
-    // }
+      props.callbackLayout(newStatus);
+    } else {
+      props.callbackLayout(layoutConfig);
+    };
   };
 
   const handleCallback = (data) => {
@@ -69,7 +68,7 @@ export const ItemMatrixConfig = (props) => {
     // listBox.push(boxSelected);
     listBox.push(data);
     setBoxSelected(listBox);
-    props.parentcallback(listBox);
+    props.callbackSweep(listBox);
     console.log(listBox);
   };
 
@@ -112,8 +111,7 @@ export const ItemMatrixConfig = (props) => {
   const GenerateRows = (arrNumber) => {
     console.log(layoutConfig);
     let boxNumbers = arrNumber.reverse();
-    if (layoutConfig != 'right-layout') {
-      console.log('test');
+    if (layoutConfig != 'right') {
       boxNumbers = boxNumbers.reverse();
     } 
     // let boxNumbers = arrNumber;
@@ -179,8 +177,8 @@ export const ItemMatrixConfig = (props) => {
           aria-label="layout"
         >
           <ToggleButton 
-            value="left-layout" 
-            aria-label="left-layout"
+            value="left" 
+            aria-label="left"
             sx={{
               backgroundColor: '#252F3A'
             }}
@@ -188,8 +186,8 @@ export const ItemMatrixConfig = (props) => {
             Left
           </ToggleButton>
           <ToggleButton 
-            value="right-layout" 
-            aria-label="right-layout"
+            value="right" 
+            aria-label="right"
             sx={{
               backgroundColor: '#252F3A'
             }}

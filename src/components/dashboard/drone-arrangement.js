@@ -12,6 +12,7 @@ export const DroneArrangement = (props) => {
   const [missionName, setMissionName] = React.useState('');
   const [maxAltitude, setMaxAltitude] = React.useState(0);
   const [missionSpeed, setMissionSpeed] = React.useState(0);
+  const [minAltitude, setMinAltitude] = React.useState(0.3);
   const [startMission, setStartMission] = React.useState(false);
 
   const data = React.useContext(droneArrangementContext);
@@ -21,12 +22,19 @@ export const DroneArrangement = (props) => {
     let configData = {
       missionName: missionName,
       missionSpeed: missionSpeed,
-      maxAltitude: maxAltitude
+      maxAltitude: maxAltitude,
+      minAltitude: minAltitude
     }
     setStartMission(true);
     props.parentcallback(true);
     props.callbackconfig(configData);
   };
+
+  const handleInputMinAltitude = (event) => {
+    if (event.target.value > 0.3) {
+      setMinAltitude(event.target.value);
+    }
+  }
 
   let connectionColor = "#F00";
   if (data.connection_status == 'True' || data.connection_status == 'true') {
@@ -194,7 +202,7 @@ export const DroneArrangement = (props) => {
           }}
         >
           <Grid container>
-          <Grid item
+            <Grid item
               lg={8}
               md={8}
               sm={12}
@@ -283,7 +291,6 @@ export const DroneArrangement = (props) => {
               lg={4}
               md={4}
               sm={12}
-              sx={{ marginBottom: '2em'}}
             >
               <TextField
                   onChange={
@@ -291,6 +298,44 @@ export const DroneArrangement = (props) => {
                   }
                   color='secondary'
                   name="max-altitude"
+                  type="text"
+                  sx={{ 
+                    input: { color: '#FFF' },
+                    width: '3em',
+                    marginRight: '0.5em',
+                 }}
+                 size="small"
+              />
+              <Typography
+                color="#B4BEDA"
+                variant="caption"
+              >
+                m
+              </Typography>
+            </Grid>
+            <Grid item
+              lg={8}
+              md={8}
+              sm={12}
+              sx={{ marginBottom: '2em'}}
+            >
+              <Typography
+                color="#B4BEDA"
+                variant="caption"
+              >
+                Minimum Altitude
+              </Typography>
+            </Grid>
+            <Grid item
+              lg={4}
+              md={4}
+              sm={12}
+              sx={{ marginBottom: '2em'}}
+            >
+              <TextField
+                  onChange={handleInputMinAltitude}
+                  color='secondary'
+                  name="min-altitude"
                   type="text"
                   sx={{ 
                     input: { color: '#FFF' },
