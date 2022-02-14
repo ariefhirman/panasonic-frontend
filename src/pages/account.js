@@ -9,14 +9,14 @@ import AuthService from 'src/service/auth.service';
 
 const Account = () => {
   const router = useRouter();
-  React.useEffect(() => {
-    let isUser = AuthService.getCurrentUser();
-    if(!isUser) {
-      router.push('/');
-      // navigate('/app/data');
-      // pindah kalo udh login
-    }}
-  );
+  // React.useEffect(() => {
+  //   let isUser = AuthService.getCurrentUser();
+  //   if(!isUser) {
+  //     router.push('/');
+  //     // navigate('/app/data');
+  //     // pindah kalo udh login
+  //   }}
+  // );
 
   return (
   <>

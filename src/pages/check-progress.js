@@ -48,7 +48,6 @@ const CheckProgress = () => {
   };
 
   const handleCallbackStatus = (data) => {
-    console.log(data);
     setStopMission(data);
   }
 

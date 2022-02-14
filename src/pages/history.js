@@ -16,14 +16,14 @@ const initialState =  {
 
 const History = () => {
   const router = useRouter();
-  React.useEffect(() => {
-    let isUser = AuthService.getCurrentUser();
-    if(!isUser) {
-      router.push('/');
-      // navigate('/app/data');
-      // pindah kalo udh login
-    }}
-  );
+  // React.useEffect(() => {
+  //   let isUser = AuthService.getCurrentUser();
+  //   if(!isUser) {
+  //     router.push('/');
+  //     // navigate('/app/data');
+  //     // pindah kalo udh login
+  //   }}
+  // );
 
   const [progress, SetProgress] = React.useState(initialState);
 

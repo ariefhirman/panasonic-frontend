@@ -47,14 +47,14 @@ const MissionConfig = () => {
   const [flightControl, setFlightControl] = React.useState('False');
   const [openPopup, setOpenPopup] = React.useState(false);
   const client = React.useContext(mqttClientContext);
-  const topic = React.useContext(topicMqttContext)
+  const mqttTopic = React.useContext(topicMqttContext)
   
   // subscibe
-  client.subscribe(topic.topicConfig.drone_name);
-  client.subscribe(topic.topicConfig.drone_connection);
-  client.subscribe(topic.topicConfig.drone_battery);
-  client.subscribe(topic.topicConfig.drone_flight_control);
-  client.subscribe(topic.topicMissionStarted);
+  client.subscribe(mqttTopic.topicConfig.drone_name);
+  client.subscribe(mqttTopic.topicConfig.drone_connection);
+  client.subscribe(mqttTopic.topicConfig.drone_battery);
+  client.subscribe(mqttTopic.topicConfig.drone_flight_control);
+  client.subscribe(mqttTopic.topicMissionStarted);
 
   const arrangementContext = {
     drone_name: droneName,
@@ -207,19 +207,19 @@ const MissionConfig = () => {
   let note;
   React.useEffect(() => {
     client.on('message', function (topic, message) {
-      if (topic == topic.topicConfig.drone_name) {
+      if (topic == mqttTopic.topicConfig.drone_name) {
         note = message.toString();
         setDroneName(note);
-      } else if (topic == topic.topicConfig.drone_connection) {
+      } else if (topic == mqttTopic.topicConfig.drone_connection) {
         note = message.toString();
         setConnectionStatus(note);
-      } else if (topic == topic.topicConfig.drone_battery) {
+      } else if (topic == mqttTopic.topicConfig.drone_battery) {
         note = message.toString();
         setBatteryLevel(note);
-      } else if (topic == topic.topicConfig.drone_flight_control) {
+      } else if (topic == mqttTopic.topicConfig.drone_flight_control) {
         note = message.toString();
         setFlightControl(note);
-      } else if (topic == topic.topicMissionStarted) {
+      } else if (topic == mqttTopic.topicMissionStarted) {
         note = message.toString();
         if (note == 'started' || note == 'Started') {
           setOpenPopup(true);

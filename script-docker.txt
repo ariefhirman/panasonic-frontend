@@ -1,0 +1,19 @@
+# Stage 1 (named "builder"): Production React Build
+FROM node:14-alpine AS builder
+WORKDIR /panasonic-frontend
+COPY package.json .
+RUN npm install --no-package-lock
+COPY . ./
+RUN npm run build
+
+# Stage 2: Start fresh, install a static server,
+FROM node:14-alpine
+WORKDIR /panasonic-frontend
+RUN npm install -g serve
+COPY --from=builder /panasonic-frontend/build ./build
+COPY --from=builder /panasonic-frontend/.next ./.next
+COPY --from=builder /panasonic-frontend/node_modules ./node_modules
+COPY --from=builder /panasonic-frontend/package.json ./package.json
+
+EXPOSE 3000
+CMD ["serve", "-s", "build", "-l", "3000"]
