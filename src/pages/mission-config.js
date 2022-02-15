@@ -11,6 +11,7 @@ import droneArrangementContext from 'src/context/mission-config/droneArrangement
 import Modal from '@mui/material/Modal';
 import AuthService from 'src/service/auth.service';
 import ConfigService from 'src/service/config.service';
+import NextLink from 'next/link';
 
 const resMessage = 'Mission Started';
 
@@ -285,9 +286,14 @@ const MissionConfig = () => {
             </Box>
             <Box
             >
-              <Typography color="#FFF" style={{ textAlign: 'center'}} variant="h6">
+              <Typography color="#FFF" style={{ textAlign: 'center', marginTop: '1em'}} variant="h6">
                 Drone Successfully Launched
               </Typography>
+              <NextLink href="/check-progress">
+                <Typography color="#397BBB" style={{ textAlign: 'center', marginTop: '1em', cursor: 'pointer'}} variant="subtitle1">
+                  Go To Check Progress
+                </Typography>
+              </NextLink>
               {/* <NextLink href="/check-progress">
                 <Typography color="#397BBB" style={{ textAlign: 'center', marginTop: '1em', cursor: 'pointer'}} variant="subtitle1">
                   Go To Check Progress
