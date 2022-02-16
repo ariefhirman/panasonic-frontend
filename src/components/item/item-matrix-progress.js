@@ -11,7 +11,7 @@ const initialState =  {
 }
 
 const emptyBox = [
-  25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
+  1,25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
 ]
 
 export const ItemMatrixProgress = (props) => {
@@ -22,8 +22,6 @@ export const ItemMatrixProgress = (props) => {
   const fillArray = (start, end) => {
     let tempArr = [];
     let interval = end - start
-    console.log(start);
-    console.log(end);
     for (let i = 0; i <= interval; i++) {
       tempArr[i] = start
       start++
@@ -36,27 +34,21 @@ export const ItemMatrixProgress = (props) => {
     switch(row) {
       case 'A':
         array = fillArray(1,17);
-        console.log(array);
         return GenerateRows(array);
       case 'B':
         array = fillArray(18,34);
-        console.log(array);
         return GenerateRows(array);
       case 'C':
         array = fillArray(35,51);
-        console.log(array);
         return GenerateRows(array);
       case 'D':
         array = fillArray(52,68);
-        console.log(array);
         return GenerateRows(array);
       case 'E':
         array = fillArray(69,85);
-        console.log(array);
         return GenerateRows(array);
       case 'F':
         array = fillArray(86,102);
-        console.log(array);
         return GenerateRows(array);
       default:
         // code block
@@ -64,6 +56,7 @@ export const ItemMatrixProgress = (props) => {
   }
 
   const GenerateRows = (boxNumbers) => {
+    boxNumbers = boxNumbers.reverse();
     return (
       <>
         {

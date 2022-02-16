@@ -11,6 +11,7 @@ import droneArrangementContext from 'src/context/mission-config/droneArrangement
 import Modal from '@mui/material/Modal';
 import AuthService from 'src/service/auth.service';
 import ConfigService from 'src/service/config.service';
+import NextLink from 'next/link';
 
 const resMessage = 'Mission Started';
 
@@ -35,16 +36,34 @@ const modalStyle = {
 };
 
 const MissionConfig = () => {
+  const getConnection = () => {
+    let connection = localStorage.getItem('droneConnection');
+    console.log(connection);
+    if (!connection) {
+      connection = 'Disconnected';
+    }
+    return connection;
+  }
+  
+  const getFlightControl = () => {
+    let control = localStorage.getItem('flightControl');
+    console.log(control);
+    if (!control) {
+      control = 'False';
+    }
+    return control;
+  }
+
   var uuid = require("uuid");
   const router = useRouter();
   const [layoutOrientation, setLayoutOrientation] = React.useState('right');
   const [droneName, setDroneName] = React.useState('Drone 1');
-  const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
+  const [connectionStatus, setConnectionStatus] = React.useState('');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [startMission, setStartMission] = React.useState(false);
   const [sweepConfig, setSweepConfig] = React.useState();
   const [droneConfig, setDroneConfig] = React.useState();
-  const [flightControl, setFlightControl] = React.useState('False');
+  const [flightControl, setFlightControl] = React.useState('');
   const [openPopup, setOpenPopup] = React.useState(false);
   const client = React.useContext(mqttClientContext);
   const mqttTopic = React.useContext(topicMqttContext)
@@ -213,9 +232,11 @@ const MissionConfig = () => {
       } else if (topic == mqttTopic.topicConfig.drone_connection) {
         note = message.toString();
         setConnectionStatus(note);
+        localStorage.setItem("droneConnection", note);
       } else if (topic == mqttTopic.topicConfig.drone_battery) {
         note = message.toString();
         setBatteryLevel(note);
+        localStorage.setItem("flightControl", note);
       } else if (topic == mqttTopic.topicConfig.drone_flight_control) {
         note = message.toString();
         setFlightControl(note);
@@ -230,6 +251,11 @@ const MissionConfig = () => {
       // client.end();
     });
   });
+
+  React.useEffect(() => {
+    setConnectionStatus(getConnection());
+    setFlightControl(getFlightControl);
+  })
 
   // React.useEffect(() => {
   //   let isUser = AuthService.getCurrentUser();
@@ -285,9 +311,14 @@ const MissionConfig = () => {
             </Box>
             <Box
             >
-              <Typography color="#FFF" style={{ textAlign: 'center'}} variant="h6">
+              <Typography color="#FFF" style={{ textAlign: 'center', marginTop: '1em'}} variant="h6">
                 Drone Successfully Launched
               </Typography>
+              <NextLink href="/check-progress">
+                <Typography color="#397BBB" style={{ textAlign: 'center', marginTop: '1em', cursor: 'pointer'}} variant="subtitle1">
+                  Go To Check Progress
+                </Typography>
+              </NextLink>
               {/* <NextLink href="/check-progress">
                 <Typography color="#397BBB" style={{ textAlign: 'center', marginTop: '1em', cursor: 'pointer'}} variant="subtitle1">
                   Go To Check Progress

@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Divider, FormControl, Fab, Grid, InputLabel, LinearProgress, MenuItem, Select, Typography, TextField, useTheme } from '@mui/material';
 import PropTypes from 'prop-types';
 import StopIcon from '@mui/icons-material/Stop';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MediaCard } from './media-card';
 import progressInfoContext from 'src/context/check-progress/progressInfoContext';
 
@@ -33,12 +35,57 @@ export const DroneInformation = (props) => {
   const [progress, setProgress] = React.useState(0);
   const [dataStatus, setDataStatus] = React.useState(props.data);
   const [stopMission, setStopMission] = React.useState(false);
+  const [pauseMission, setPauseMission] = React.useState('false');
   const data = React.useContext(progressInfoContext);
 
   const handleStatus = () => {
     setStopMission(true);
     props.parentcallback(true);
   };
+
+  const handlePause = () => {
+    let toggler = false;
+    if (pauseMission == 'false') {
+      toggler = true;
+    }
+    setPauseMission(toggler.toString());
+    props.callbackpause(toggler.toString());
+  }
+
+  const renderPauseButton = (pauseMission) => {
+    console.log(pauseMission)
+    if (pauseMission == 'false') {
+      return (
+        <Fab 
+          sx={{
+            color: '#FFF',
+            backgroundColor: "#FFAB4C",
+            '&:hover': {
+              backgroundColor: '#D98C00'
+            }
+          }}
+          onClick={handlePause}
+        >
+          <PauseIcon />
+        </Fab>
+      )
+    } else {
+      return (
+        <Fab 
+          sx={{
+            color: '#FFF',
+            backgroundColor: "#398AB9",
+            '&:hover': {
+              backgroundColor: '#33779e'
+            }
+          }}
+          onClick={handlePause}
+        >
+          <PlayArrowIcon />
+        </Fab>
+      )
+    }
+  }
 
   let connectionColor = "#F00";
   if (data.connection_status == 'True' || data.connection_status == 'true') {
@@ -354,13 +401,14 @@ export const DroneInformation = (props) => {
                   sm={12}
                   sx={{ marginBottom: '1em', right:'100'}}
                 >
+                  {renderPauseButton(pauseMission)}
                   <Fab 
                     sx={{
                       color: '#FFF',
                       backgroundColor: "#D14343",
                       '&:hover': {
                         backgroundColor: '#9c2a2a'
-                      }
+                      },
                     }}
                     onClick={handleStatus}
                   >
