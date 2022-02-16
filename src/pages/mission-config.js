@@ -175,8 +175,8 @@ const MissionConfig = () => {
         id: uuid.v4(),
         mission_name: '',
         drone_name: droneName,
-        start_point: arrRackID[0],
-        end_point: arrRackID[arrRackID.length-1],
+        start_point: parseInt(sweepConfig[0]), // will be implemented rack ID array
+        end_point: parseInt(sweepConfig[sweepConfig.length-1]),
         mission_speed: 0,
         max_altitude: 0,
         min_altitude: 0.3,
