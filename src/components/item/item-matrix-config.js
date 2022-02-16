@@ -6,11 +6,11 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 let listBox = [];
-let rackSize = [];
-const width = 2.7;
-const level_height = [
-  1.225, 1.05, 1.06
-];
+// let rackSize = [];
+// const width = 2.7;
+// const level_height = [
+//   1.225, 1.05, 1.06
+// ];
 
 // const emptyBox = [
 //   25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
@@ -67,9 +67,9 @@ export const ItemMatrixConfig = (props) => {
     }
     // listBox.push(boxSelected);
     listBox.push(data);
+    console.log(listBox);
     setBoxSelected(listBox);
     props.callbackSweep(listBox);
-    console.log(listBox);
   };
 
   const fillArray = (start, end) => {
@@ -107,13 +107,72 @@ export const ItemMatrixConfig = (props) => {
         // code block
     }
   }
-  
-  const GenerateRows = (arrNumber) => {
-    console.log(layoutConfig);
+
+  const generateIntervalsFromIndex = (index) => {
+    let intervals = {
+      start: 0,
+      stop: 0
+    };
+    let startInterval;
+    let stopInterval;
+    console.log(index);
+    if (1 <= index && index <= 34) {
+      startInterval = 1
+      stopInterval = 34
+    } else if (34 < index && index <= 68) {
+      startInterval = 34
+      stopInterval = 68
+    } else if (68 < index && index <= 102) {
+      startInterval = 68
+      stopInterval = 102
+    }
+    intervals.start = startInterval
+    intervals.stop = stopInterval
+    console.log(intervals);
+    return intervals
+  }
+
+  const GenerateUsableRows = (arrNumber) => {
     let boxNumbers = arrNumber.reverse();
     if (layoutConfig != 'right') {
       boxNumbers = boxNumbers.reverse();
     } 
+    // let boxNumbers = arrNumber;
+    // console.log(boxNumbers);
+    return (
+      <>
+        {
+          boxNumbers.map((number) => {
+            let propStatus = 'box-black'
+            if (emptyBox.includes(number)) {
+              propStatus = '';
+            }
+
+            {/* if () */}
+
+            return (
+              <Grid className="row" key={number}>
+                <ItemBoxConfig 
+                  key={number} 
+                  boxNumber={number} 
+                  parentcallback={handleCallback} 
+                  status={propStatus}
+                  emptylayout={emptyBox}  
+                />
+              </Grid>
+            );
+          })
+        }
+      </>
+    )
+  }
+  
+  const GenerateRows = (arrNumber) => {
+    let boxNumbers = arrNumber.reverse();
+    if (layoutConfig != 'right') {
+      boxNumbers = boxNumbers.reverse();
+    } 
+    // console.log(boxNumbers[2]);
     // let boxNumbers = arrNumber;
     // console.log(boxNumbers);
     return (

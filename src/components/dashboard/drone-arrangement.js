@@ -1,9 +1,6 @@
 import React from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Divider, FormControl, Grid, InputLabel, MenuItem, Select, Typography, TextField, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
-import LaptopMacIcon from '@mui/icons-material/LaptopMac';
-import PhoneIcon from '@mui/icons-material/Phone';
-import TabletIcon from '@mui/icons-material/Tablet';
 import droneArrangementContext from 'src/context/mission-config/droneArrangementContext';
 
 export const DroneArrangement = (props) => {
@@ -14,18 +11,31 @@ export const DroneArrangement = (props) => {
   const [missionSpeed, setMissionSpeed] = React.useState(0);
   const [minAltitude, setMinAltitude] = React.useState(0.3);
   const [startMission, setStartMission] = React.useState(false);
-  const [restartMission, setRestartMission] = React.useState(false);
-  const [disabledBtnRestart, setDisabledBtnRestart] = React.useState(false);
+  const [restartMission, setRestartMission] = React.useState(false);;
+  const [direction, setDirection] = React.useState('right');
 
   const data = React.useContext(droneArrangementContext);
   console.log(data);
+
+  const handleChange = (event) => {
+    if (event.target.value !== null) {
+      setDirection(event.target.value);
+    }
+    console.log(event.target.value)
+    // if (event.target.value === 'Input') {
+    //   setStatusInput(true)
+    // } else {
+    //   setStatusInput(false)
+    // }
+  };
 
   const handleStatus = (event) => {
     let configData = {
       missionName: missionName,
       missionSpeed: missionSpeed,
       maxAltitude: maxAltitude,
-      minAltitude: minAltitude
+      minAltitude: minAltitude,
+      droneDirection: direction
     }
     setStartMission(true);
     props.parentcallback(true);
@@ -33,7 +43,6 @@ export const DroneArrangement = (props) => {
   };
 
   const handleRestart = () => {
-    setDisabledBtnRestart(true);
     setRestartMission(true);
     props.callbackrestart(true);
   }
@@ -338,7 +347,6 @@ export const DroneArrangement = (props) => {
               lg={4}
               md={4}
               sm={12}
-              sx={{ marginBottom: '2em'}}
             >
               <TextField
                   onChange={handleInputMinAltitude}
@@ -359,7 +367,51 @@ export const DroneArrangement = (props) => {
                 m
               </Typography>
             </Grid>
-            
+            <Grid item
+              lg={8}
+              md={8}
+              sm={12}
+              sx={{ marginBottom: '2em'}}
+            >
+              <Typography
+                color="#B4BEDA"
+                variant="caption"
+              >
+                Drone Direction
+              </Typography>
+            </Grid>
+            <Grid item
+              lg={4}
+              md={4}
+              sm={12}
+            >
+              <FormControl fullWidth>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  // value={age}
+                  // label="Finish"
+                  onChange={handleChange}
+                  value={direction}
+                  sx={{ 
+                    color: '#FFF',
+                    height: '2em',
+                  }}
+                  size="small"
+                >
+                  <MenuItem value={'right'}>
+                    <Typography variant="caption">
+                      Right
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem value={'left'}>
+                    <Typography variant="caption">
+                      Left
+                    </Typography>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
             {/* <Grid item
               lg={12}
               md={12}
@@ -411,7 +463,6 @@ export const DroneArrangement = (props) => {
                 color="primary"
                 size="small"
                 type="submit"
-                disabled={disabledBtnRestart}
                 variant="contained"
                 onClick={handleRestart}
               >

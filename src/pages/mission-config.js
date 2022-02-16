@@ -178,8 +178,9 @@ const MissionConfig = () => {
     setOpenPopupRestartMission(false);
   }
 
-  if (restartMission) {
-    publishMessage(mqttTopic.topicRestartMission, 'True', resMessage);
+  const handleRestartPopup = () => {
+    setOpenPopupRestartMission(true);
+    setTimeout(() => handleClose(), 1000);
   }
 
   console.log(restartMission);
@@ -189,7 +190,7 @@ const MissionConfig = () => {
     let dataConfig = {};
     let arrRackSize = fillRackSizeArray(sweepConfig);
     let arrRackID = getArrayRackID(sweepConfig);
-    publishMessage(mqttTopic.topicStartMission, 'True', resMessage);
+    publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
     if (droneConfig) {
         dataConfig = {
         id: uuid.v4(),
@@ -200,7 +201,7 @@ const MissionConfig = () => {
         mission_speed: parseFloat(droneConfig.missionSpeed),
         max_altitude: parseFloat(droneConfig.maxAltitude),
         min_altitude: parseFloat(droneConfig.minAltitude),
-        orientation: layoutOrientation,
+        orientation: droneConfig.droneDirection,
         rack_ids: arrRackID,
         sweep_config: sweepConfig,
         rack_size: arrRackSize
@@ -215,7 +216,7 @@ const MissionConfig = () => {
         mission_speed: 0,
         max_altitude: 0,
         min_altitude: 0.3,
-        orientation: layoutOrientation,
+        orientation: droneConfig.droneDirection,
         rack_ids: arrRackID,
         sweep_config: sweepConfig,
         rack_size: arrRackSize
@@ -271,6 +272,12 @@ const MissionConfig = () => {
   React.useEffect(() => {
     setConnectionStatus(getConnection());
     setFlightControl(getFlightControl);
+    if (restartMission) {
+      publishMessage(mqttTopic.topicRestartMission, 'true', resMessage);
+      publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
+      handleRestartPopup();
+      setRestartMission(false);
+    }
   })
 
   // React.useEffect(() => {
