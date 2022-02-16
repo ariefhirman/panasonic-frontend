@@ -154,7 +154,7 @@ const MissionConfig = () => {
     let dataConfig = {};
     let arrRackSize = fillRackSizeArray(sweepConfig);
     let arrRackID = getArrayRackID(sweepConfig);
-    publishMessage(topic.topicStartMission, 'True', resMessage);
+    publishMessage(mqttTopic.topicStartMission, 'True', resMessage);
     if (droneConfig) {
         dataConfig = {
         id: uuid.v4(),
