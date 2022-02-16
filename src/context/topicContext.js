@@ -10,9 +10,10 @@ const topic = React.createContext({
     drone_horizontal_speed: 'dji/status/horizontal-speed',
     drone_flight_control: 'dji/status/flight-control'
   },
-  topicStopMission: 'mission-planner/stop',
   topicStartMission: 'mission-planner/start',
-  topicMissionStarted: 'mission-planner/start/result'
+  topicPauseMission: 'mission-planner/pause',
+  topicStopMission: 'mission-planner/shutdown',
+  topicMissionStarted: 'mission-planner/start/result',
 });
 
 export default topic;

@@ -36,16 +36,34 @@ const modalStyle = {
 };
 
 const MissionConfig = () => {
+  const getConnection = () => {
+    let connection = localStorage.getItem('droneConnection');
+    console.log(connection);
+    if (!connection) {
+      connection = 'Disconnected';
+    }
+    return connection;
+  }
+  
+  const getFlightControl = () => {
+    let control = localStorage.getItem('flightControl');
+    console.log(control);
+    if (!control) {
+      control = 'False';
+    }
+    return control;
+  }
+
   var uuid = require("uuid");
   const router = useRouter();
   const [layoutOrientation, setLayoutOrientation] = React.useState('right');
   const [droneName, setDroneName] = React.useState('Drone 1');
-  const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
+  const [connectionStatus, setConnectionStatus] = React.useState('');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [startMission, setStartMission] = React.useState(false);
   const [sweepConfig, setSweepConfig] = React.useState();
   const [droneConfig, setDroneConfig] = React.useState();
-  const [flightControl, setFlightControl] = React.useState('False');
+  const [flightControl, setFlightControl] = React.useState('');
   const [openPopup, setOpenPopup] = React.useState(false);
   const client = React.useContext(mqttClientContext);
   const mqttTopic = React.useContext(topicMqttContext)
@@ -155,14 +173,14 @@ const MissionConfig = () => {
     let dataConfig = {};
     let arrRackSize = fillRackSizeArray(sweepConfig);
     let arrRackID = getArrayRackID(sweepConfig);
-    publishMessage(topic.topicStartMission, 'True', resMessage);
+    publishMessage(mqttTopic.topicStartMission, 'True', resMessage);
     if (droneConfig) {
         dataConfig = {
         id: uuid.v4(),
         mission_name: droneConfig.missionName,
         drone_name: droneName,
-        start_point: arrRackID[0], // will be implemented rack ID array
-        end_point: arrRackID[arrRackID.length-1], // will be implemented rack ID array
+        start_point: parseInt(sweepConfig[0]), // will be implemented rack ID array
+        end_point: parseInt(sweepConfig[sweepConfig.length-1]), // will be implemented rack ID array
         mission_speed: parseFloat(droneConfig.missionSpeed),
         max_altitude: parseFloat(droneConfig.maxAltitude),
         min_altitude: parseFloat(droneConfig.minAltitude),
@@ -176,8 +194,8 @@ const MissionConfig = () => {
         id: uuid.v4(),
         mission_name: '',
         drone_name: droneName,
-        start_point: arrRackID[0],
-        end_point: arrRackID[arrRackID.length-1],
+        start_point: parseInt(sweepConfig[0]), // will be implemented rack ID array
+        end_point: parseInt(sweepConfig[sweepConfig.length-1]),
         mission_speed: 0,
         max_altitude: 0,
         min_altitude: 0.3,
@@ -214,9 +232,11 @@ const MissionConfig = () => {
       } else if (topic == mqttTopic.topicConfig.drone_connection) {
         note = message.toString();
         setConnectionStatus(note);
+        localStorage.setItem("droneConnection", note);
       } else if (topic == mqttTopic.topicConfig.drone_battery) {
         note = message.toString();
         setBatteryLevel(note);
+        localStorage.setItem("flightControl", note);
       } else if (topic == mqttTopic.topicConfig.drone_flight_control) {
         note = message.toString();
         setFlightControl(note);
@@ -231,6 +251,11 @@ const MissionConfig = () => {
       // client.end();
     });
   });
+
+  React.useEffect(() => {
+    setConnectionStatus(getConnection());
+    setFlightControl(getFlightControl);
+  })
 
   // React.useEffect(() => {
   //   let isUser = AuthService.getCurrentUser();

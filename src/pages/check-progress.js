@@ -11,8 +11,8 @@ import progressInfoContext from 'src/context/check-progress/progressInfoContext'
 import AuthService from 'src/service/auth.service';
 
 const initialState =  {
-  success: [1,2,3],
-  audited: [5,8]
+  success: [],
+  audited: []
 }
 
 const resMessage = 'Mission Stopped';
@@ -21,12 +21,14 @@ const CheckProgress = () => {
   const router = useRouter();
   const [progress, SetProgress] = React.useState(initialState);
   const [stopMission, setStopMission] = React.useState(false);
+  const [pauseMission, setPauseMission] = React.useState('false');
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [altitude, setAltitude] = React.useState('0');
   const [verticalSpeed, setVerticalSpeed] = React.useState('0');
   const [horizontalSpeed, setHorizontalSpeed] = React.useState('0');
+  const [changedState, setChangedState] = React.useState(false);
   const client = React.useContext(mqttClientContext);
   const mqttTopic = React.useContext(topicMqttContext)
 
@@ -49,6 +51,11 @@ const CheckProgress = () => {
 
   const handleCallbackStatus = (data) => {
     setStopMission(data);
+  }
+
+  const handlePauseStatus = (data) => {
+    setPauseMission(data);
+    setChangedState(true);
   }
 
   const publishMessage = (topic, message, resMessage) => {
@@ -88,6 +95,17 @@ const CheckProgress = () => {
     });
   });
 
+  React.useEffect(() => {
+    if (stopMission) {
+      publishMessage(mqttTopic.topicStopMission, 'true', resMessage);
+    } 
+
+    if (changedState) {
+      publishMessage(mqttTopic.topicPauseMission, pauseMission, resMessage);
+      setChangedState(false);
+    }
+  })
+
   // checking login
   // React.useEffect(() => {
   //   let isUser = AuthService.getCurrentUser();
@@ -98,10 +116,6 @@ const CheckProgress = () => {
   //   }}
   // );
   
-  if (stopMission) {
-    publishMessage(mqttTopic.topicStopMission, 'true', resMessage);
-  } 
-
   return (
     <>
       <Head>
@@ -139,7 +153,12 @@ const CheckProgress = () => {
               xs={12}
             >
               <progressInfoContext.Provider value={droneInformation}>
-                <DroneInformation parentcallback={handleCallbackStatus} data={progress} sx={{ height: '100%' }} />
+                <DroneInformation 
+                  parentcallback={handleCallbackStatus}
+                  callbackpause={handlePauseStatus} 
+                  data={progress} 
+                  sx={{ height: '100%' }} 
+                />
               </progressInfoContext.Provider>
             </Grid>
           </Grid>

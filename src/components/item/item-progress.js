@@ -13,7 +13,6 @@ const ItemBoxProgress = (props) => {
             return (
                 <Typography color="#FFF" variant="subtitle1" key={number}
                     align="center"
-                    sx={{ paddingRight: '1em'}}
                 >
                     {number}
                 </Typography>
