@@ -61,10 +61,12 @@ const MissionConfig = () => {
   const [connectionStatus, setConnectionStatus] = React.useState('');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [startMission, setStartMission] = React.useState(false);
+  const [restartMission, setRestartMission] = React.useState(false);
   const [sweepConfig, setSweepConfig] = React.useState();
   const [droneConfig, setDroneConfig] = React.useState();
   const [flightControl, setFlightControl] = React.useState('');
-  const [openPopup, setOpenPopup] = React.useState(false);
+  const [openPopupStartMission, setOpenPopupStartMission] = React.useState(false);
+  const [openPopupRestartMission, setOpenPopupRestartMission] = React.useState(false);
   const client = React.useContext(mqttClientContext);
   const mqttTopic = React.useContext(topicMqttContext)
   
@@ -167,7 +169,22 @@ const MissionConfig = () => {
     setLayoutOrientation(data);
   }
 
-  const handleClose = () => setOpenPopup(false);
+  const handleCallbackRestart = (data) => {
+    setRestartMission(data);
+  }
+
+  const handleClose = () => {
+    setOpenPopupStartMission(false);
+    setOpenPopupRestartMission(false);
+  }
+
+  // if (restartMission) {
+  //   publishMessage(mqttTopic.topicRestartMission, 'True', resMessage);
+  //   setOpenPopupRestartMission(true);
+  // }
+
+  console.log(restartMission);
+  console.log(startMission);
 
   if (startMission) {
     let dataConfig = {};
@@ -243,7 +260,7 @@ const MissionConfig = () => {
       } else if (topic == mqttTopic.topicMissionStarted) {
         note = message.toString();
         if (note == 'started' || note == 'Started') {
-          setOpenPopup(true);
+          setOpenPopupStartMission(true);
           // router.push('/success-launched');
         }
       }
@@ -266,23 +283,10 @@ const MissionConfig = () => {
   //   }}
   // );
 
-  return (
-    <>
-    <Head>
-      <title>
-        Mission Configuration
-      </title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8,
-        backgroundColor: 'neutral.900',
-      }}
-    >
+  const renderModalStarted = (openPopupStartMission) => {
+    return (
       <Modal
-        open={openPopup}
+        open={openPopupStartMission}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -328,6 +332,73 @@ const MissionConfig = () => {
           </Container>
         </Box>
       </Modal>
+    );
+  }
+
+  const renderModalRestarted = (openPopupRestartMission) => {
+    return (
+      <Modal
+        open={openPopupRestartMission}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          {/* <Typography align="center" id="modal-modal-title" variant="h6" component="h2" color="#FFF">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" color="#FFF" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography> */}
+          <Container>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+                <img
+                  alt="drone-icon"
+                  src="/static/images/success-launched.png"
+                  style={{
+                    height: '50%',
+                    width: '50%'
+                  }}
+                />
+            </Box>
+            <Box
+            >
+              <Typography color="#FFF" style={{ textAlign: 'center', marginTop: '1em'}} variant="h6">
+                Mission Restarted
+              </Typography>
+              {/* <NextLink href="/check-progress">
+                <Typography color="#397BBB" style={{ textAlign: 'center', marginTop: '1em', cursor: 'pointer'}} variant="subtitle1">
+                  Go To Check Progress
+                </Typography>
+              </NextLink> */}
+            </Box>
+          </Container>
+        </Box>
+      </Modal>
+    );
+  }
+
+  return (
+    <>
+    <Head>
+      <title>
+        Mission Configuration
+      </title>
+    </Head>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        py: 8,
+        backgroundColor: 'neutral.900',
+      }}
+    >
+      {renderModalRestarted(openPopupRestartMission)}
+      {renderModalStarted(openPopupStartMission)}
       <Container maxWidth={false}>
         <Grid
           container
@@ -353,7 +424,10 @@ const MissionConfig = () => {
             xs={12}
           >
             <droneArrangementContext.Provider value={arrangementContext}>
-              <DroneArrangement callbackconfig={handleCallbackDroneConfig} parentcallback={handleCallbackStatus} sx={{ height: '100%' }} />
+              <DroneArrangement
+                callbackrestart={handleCallbackRestart} 
+                callbackconfig={handleCallbackDroneConfig} 
+                parentcallback={handleCallbackStatus} sx={{ height: '100%' }} />
             </droneArrangementContext.Provider>
           </Grid>
         </Grid>

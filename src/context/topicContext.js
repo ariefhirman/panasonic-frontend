@@ -13,6 +13,7 @@ const topic = React.createContext({
   topicStartMission: 'mission-planner/start',
   topicPauseMission: 'mission-planner/pause',
   topicStopMission: 'mission-planner/shutdown',
+  topicRestartMission: 'mission-planner/restart',
   topicMissionStarted: 'mission-planner/start/result',
 });
 

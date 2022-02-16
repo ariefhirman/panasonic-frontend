@@ -14,6 +14,7 @@ export const DroneArrangement = (props) => {
   const [missionSpeed, setMissionSpeed] = React.useState(0);
   const [minAltitude, setMinAltitude] = React.useState(0.3);
   const [startMission, setStartMission] = React.useState(false);
+  const [restartMission, setRestartMission] = React.useState(false);
 
   const data = React.useContext(droneArrangementContext);
   console.log(data);
@@ -29,6 +30,11 @@ export const DroneArrangement = (props) => {
     props.parentcallback(true);
     props.callbackconfig(configData);
   };
+
+  const handleRestart = () => {
+    setRestartMission(true);
+    props.callbackrestart(true);
+  }
 
   const handleInputMinAltitude = (event) => {
     if (event.target.value > 0.3) {
@@ -351,6 +357,7 @@ export const DroneArrangement = (props) => {
                 m
               </Typography>
             </Grid>
+            
             {/* <Grid item
               lg={12}
               md={12}
@@ -387,9 +394,32 @@ export const DroneArrangement = (props) => {
                 </Select>
               </FormControl>
             </Grid> */}
-            <Grid item
+            {/* <Grid item
               lg={8}
               md={8}
+              sx={{ marginBottom: '1em'}}
+            ></Grid> */}
+            <Grid item
+              lg={4}
+              md={4}
+              sm={12}
+              sx={{ marginBottom: '1em', right:'100'}}
+            >
+              <Button
+                color="primary"
+                size="small"
+                type="submit"
+                variant="contained"
+                onClick={handleRestart}
+              >
+                <Typography variant="caption" nowrap="true">
+                Restart
+                </Typography>
+              </Button>
+            </Grid>
+            <Grid item
+              lg={4}
+              md={4}
               sx={{ marginBottom: '1em'}}
             ></Grid>
             <Grid item
