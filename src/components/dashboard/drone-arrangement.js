@@ -15,6 +15,7 @@ export const DroneArrangement = (props) => {
   const [minAltitude, setMinAltitude] = React.useState(0.3);
   const [startMission, setStartMission] = React.useState(false);
   const [restartMission, setRestartMission] = React.useState(false);
+  const [disabledBtnRestart, setDisabledBtnRestart] = React.useState(false);
 
   const data = React.useContext(droneArrangementContext);
   console.log(data);
@@ -32,6 +33,7 @@ export const DroneArrangement = (props) => {
   };
 
   const handleRestart = () => {
+    setDisabledBtnRestart(true);
     setRestartMission(true);
     props.callbackrestart(true);
   }
@@ -409,6 +411,7 @@ export const DroneArrangement = (props) => {
                 color="primary"
                 size="small"
                 type="submit"
+                disabled={disabledBtnRestart}
                 variant="contained"
                 onClick={handleRestart}
               >

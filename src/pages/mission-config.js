@@ -178,10 +178,9 @@ const MissionConfig = () => {
     setOpenPopupRestartMission(false);
   }
 
-  // if (restartMission) {
-  //   publishMessage(mqttTopic.topicRestartMission, 'True', resMessage);
-  //   setOpenPopupRestartMission(true);
-  // }
+  if (restartMission) {
+    publishMessage(mqttTopic.topicRestartMission, 'True', resMessage);
+  }
 
   console.log(restartMission);
   console.log(startMission);
