@@ -12,7 +12,7 @@ export const DroneArrangement = (props) => {
   const [minAltitude, setMinAltitude] = React.useState(0.3);
   const [startMission, setStartMission] = React.useState(false);
   const [restartMission, setRestartMission] = React.useState(false);;
-  const [direction, setDirection] = React.useState('right');
+  const [direction, setDirection] = React.useState('left');
 
   const data = React.useContext(droneArrangementContext);
   console.log(data);

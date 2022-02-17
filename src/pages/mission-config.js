@@ -38,7 +38,6 @@ const modalStyle = {
 const MissionConfig = () => {
   const getConnection = () => {
     let connection = localStorage.getItem('droneConnection');
-    console.log(connection);
     if (!connection) {
       connection = 'Disconnected';
     }
@@ -47,7 +46,6 @@ const MissionConfig = () => {
   
   const getFlightControl = () => {
     let control = localStorage.getItem('flightControl');
-    console.log(control);
     if (!control) {
       control = 'False';
     }
@@ -56,7 +54,7 @@ const MissionConfig = () => {
 
   var uuid = require("uuid");
   const router = useRouter();
-  const [layoutOrientation, setLayoutOrientation] = React.useState('right');
+  const [layoutOrientation, setLayoutOrientation] = React.useState('left');
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
@@ -85,20 +83,60 @@ const MissionConfig = () => {
     flight_control: flightControl
   };
 
+  const checkMultiRow = (sweepConfig) => {
+    let isMultiRow = false;
+    let firstElement = sweepConfig[0];
+    let lastElement = sweepConfig[sweepConfig.length-1];
+    if (getTurningPoint(firstElement) < getTurningPoint(lastElement)) {
+      isMultiRow = true;
+    }
+
+    return isMultiRow;
+  }
+
+  const checkIsStopFillArray = (index, sweepConfig) => {
+    let iterate = true;
+    if (index == sweepConfig[sweepConfig.length-1]) {
+      iterate = false;
+    }
+    return iterate;
+  }
+
+  const fillSweepConfig = (index, sweepConfig) => {
+    let config = {};
+    config["rack"] = index;
+    config["rack_id"] = getRackID(index);
+    config["rack_size"] = {
+      width: widthType15,
+      level_height: level_height_type15
+    }
+    if (sweepConfig.includes(index)) {
+      config["scan"] = true;
+    } else {
+      config["scan"] = false;
+    }
+
+    return config;
+  }
+
   const fillRackArray = (sweepConfig) => {
     let arrSweepConfig = [];
-    if (sweepConfig) {
-      // for(let i=sweepConfig[0]; i <= sweepConfig[sweepConfig.length-1]; i++) {
-      //   let configRackSize = {};
-      //   configRackSize["width"] = widthType15;
-      //   console.log(sweepConfig.includes(i));
-      //   if (sweepConfig.includes(i)) {
-      //     configRackSize["level_height"] = level_height_type15;
-      //   } else {
-      //     configRackSize["level_height"] = [];
-      //   }
-      //   arrRackSize.push(configRackSize)
-      // };
+    if (sweepConfig.length != 0) {
+      // helper variables
+      let multiRow = checkMultiRow(sweepConfig);
+      if (multiRow) {
+        arrSweepConfig = fillMultiRowConfig(sweepConfig, multiRow);
+      } else {
+        arrSweepConfig = fillSingleRowConfig(sweepConfig);
+      }
+    }
+    return arrSweepConfig;
+  }
+
+  const fillSingleRowConfig = (sweepConfig) => {
+    let arrSweepConfig = [];
+    let direction = droneConfig.droneDirection;
+    if (direction == 'left') {
       for (let i=sweepConfig[0]; i <= Math.max(...sweepConfig); i++) {
         let config = {};
         config["rack"] = i;
@@ -114,9 +152,128 @@ const MissionConfig = () => {
         }
         arrSweepConfig.push(config)
       };
+    } else {
+      for (let i = Math.max(...sweepConfig); i >= Math.min(...sweepConfig); i--) {
+        let config = {};
+        config["rack"] = i;
+        config["rack_id"] = getRackID(i);
+        config["rack_size"] = {
+          width: widthType15,
+          level_height: level_height_type15
+        }
+        if (sweepConfig.includes(i)) {
+          config["scan"] = true;
+        } else {
+          config["scan"] = false;
+        }
+        arrSweepConfig.push(config)
+      };
     }
+
+    return arrSweepConfig;
+  };
+
+  const fillMultiRowConfig = (sweepConfig, multiRow) => {
+    let arrSweepConfig = [];
+    let iterate = true;
+    let direction = droneConfig.droneDirection;
+    let i = sweepConfig[0];
+    let firstRowElement = sweepConfig[0];
+    let isTurning = true;
+    // fill multirow
+    while (iterate && multiRow) {
+      if (direction == 'left') {
+        if (i <= getTurningPoint(firstRowElement)) {
+          iterate = checkIsStopFillArray(i, sweepConfig);
+          let config = fillSweepConfig(i, sweepConfig)
+          arrSweepConfig.push(config);
+          i++;
+        } else {
+          if (isTurning) {
+            i = getTurningPoint(i);
+            isTurning = false;
+          }
+          iterate = checkIsStopFillArray(i, sweepConfig);
+          let config = fillSweepConfig(i, sweepConfig)
+          arrSweepConfig.push(config);
+          i--;
+        }
+      } 
+      // FOR RIGHT DIRECTION
+      // else {
+      //   if (i > getRackStartPoint(firstRowElement)) {
+      //     iterate = checkIsStopFillArray(i, sweepConfig);
+      //     let config = fillSweepConfig(i, sweepConfig)
+      //     arrSweepConfig.push(config);
+      //     i--;
+      //   } else {
+      //     if (isTurning) {
+      //       i = getRackStartPoint(i);
+      //       isTurning = false;
+      //     }
+      //     iterate = checkIsStopFillArray(i, sweepConfig);
+      //     let config = fillSweepConfig(i, sweepConfig)
+      //     arrSweepConfig.push(config);
+      //     i++;
+      //   }
+      //   console.log(arrSweepConfig);
+      // }
+    }
+
     return arrSweepConfig;
   }
+
+  const getTurningPoint = (num) => {
+    let point;
+    let numPrefix = (num / 18) >> 0;
+    switch(numPrefix) {
+      case 0:
+        point = 17;
+        break;
+      case 1:
+        point = 34;
+        break;
+      case 2:
+        point = 51;
+        break;
+      case 3:
+        point = 68;
+        break;
+      case 4:
+        point = 85;
+        break;
+      case 5:
+        point = 102;
+        break;
+    }
+    return point;
+  };
+
+  const getRackStartPoint = (num) => {
+    let point;
+    let numPrefix = (num / 18) >> 0;
+    switch(numPrefix) {
+      case 0:
+        point = 1;
+        break;
+      case 1:
+        point = 18;
+        break;
+      case 2:
+        point = 35;
+        break;
+      case 3:
+        point = 52;
+        break;
+      case 4:
+        point = 69;
+        break;
+      case 5:
+        point = 86;
+        break;
+    }
+    return point;
+  };
 
   const getRackID = (num) => {
     let prefix;
@@ -150,12 +307,10 @@ const MissionConfig = () => {
 
   const getArrayRackID = (sweep) => {
     let arr = [];
-    console.log(sweep);
     sweep.forEach(el => 
       // console.log(getRackID(el))
       arr.push(getRackID(el))
     );
-    console.log(arr);
     return arr;
   }
 
@@ -204,8 +359,6 @@ const MissionConfig = () => {
   }
 
   if (startMission) {
-    console.log(sweepConfig);
-    console.log(turningPoint);
     let dataConfig = {};
     let arrRack = [];
     let arrRackID = [];
