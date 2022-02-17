@@ -45,6 +45,8 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 export const ItemMatrixConfig = (props) => {
   const [boxSelected, setBoxSelected] = React.useState([]);
   const [layoutConfig, setLayoutConfig] = React.useState('right');
+  const [firstSelected, setFirstSelected] = React.useState(0);
+  const [selectedRack, setSelectedRack] = React.useState(false);
 
   const resetConfigHandler = () => {
     setBoxSelected([]);
@@ -62,6 +64,7 @@ export const ItemMatrixConfig = (props) => {
   };
 
   const handleCallback = (data) => {
+    console.log(data);
     if (listBox.includes(data)) {
       return;
     }
@@ -69,7 +72,11 @@ export const ItemMatrixConfig = (props) => {
     listBox.push(data);
     console.log(listBox);
     setBoxSelected(listBox);
+
+    let turningPoint = getTurningPoint(listBox[0]);
+    setFirstSelected(listBox[0]);
     props.callbackSweep(listBox);
+    props.callbackTurningPoint(turningPoint);
   };
 
   const fillArray = (start, end) => {
@@ -80,6 +87,50 @@ export const ItemMatrixConfig = (props) => {
       start++
     }
     return tempArr;
+  }
+
+  const generateArrayFromRowsV2 = (row) => {
+    let array = []
+    switch(row) {
+      case 'A':
+        array = fillArray(1,17);
+        if (selectedRack) {
+          return GenerateUsableRows(array, firstSelected)
+        }
+        return GenerateRows(array);
+      case 'B':
+        array = fillArray(18,34);
+        if (selectedRack) {
+          return GenerateUsableRows(array, firstSelected)
+        }
+        return GenerateRows(array);
+      case 'C':
+        array = fillArray(35,51);
+        if (selectedRack) {
+          return GenerateUsableRows(array, firstSelected)
+        }
+        return GenerateRows(array);
+      case 'D':
+        array = fillArray(52,68);
+        if (selectedRack) {
+          return GenerateUsableRows(array, firstSelected)
+        }
+        return GenerateRows(array);
+      case 'E':
+        array = fillArray(69,85);
+        if (selectedRack) {
+          return GenerateUsableRows(array, firstSelected)
+        }
+        return GenerateRows(array);
+      case 'F':
+        array = fillArray(86,102);
+        if (selectedRack) {
+          return GenerateUsableRows(array, firstSelected)
+        }
+        return GenerateRows(array);
+      default:
+        // code block
+    }
   }
 
   const generateArrayFromRows = (row) => {
@@ -108,6 +159,32 @@ export const ItemMatrixConfig = (props) => {
     }
   }
 
+  const getTurningPoint = (num) => {
+    let prefix;
+    let numPrefix = (num / 18) >> 0;
+    switch(numPrefix) {
+      case 0:
+        prefix = 17;
+        break;
+      case 1:
+        prefix = 34;
+        break;
+      case 2:
+        prefix = 51;
+        break;
+      case 3:
+        prefix = 68;
+        break;
+      case 4:
+        prefix = 85;
+        break;
+      case 5:
+        prefix = 102;
+        break;
+    }
+    return prefix;
+  };
+
   const generateIntervalsFromIndex = (index) => {
     let intervals = {
       start: 0,
@@ -128,15 +205,15 @@ export const ItemMatrixConfig = (props) => {
     }
     intervals.start = startInterval
     intervals.stop = stopInterval
-    console.log(intervals);
     return intervals
   }
 
-  const GenerateUsableRows = (arrNumber) => {
+  const GenerateUsableRows = (arrNumber, index) => {
     let boxNumbers = arrNumber.reverse();
     if (layoutConfig != 'right') {
       boxNumbers = boxNumbers.reverse();
     } 
+    let usableRows = generateIntervalsFromIndex(index);
     // let boxNumbers = arrNumber;
     // console.log(boxNumbers);
     return (
@@ -145,6 +222,10 @@ export const ItemMatrixConfig = (props) => {
           boxNumbers.map((number) => {
             let propStatus = 'box-black'
             if (emptyBox.includes(number)) {
+              propStatus = '';
+            }
+
+            if (usableRows.start <= number && number <= usableRows.stop) {
               propStatus = '';
             }
 

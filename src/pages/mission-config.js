@@ -62,9 +62,10 @@ const MissionConfig = () => {
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
   const [startMission, setStartMission] = React.useState(false);
   const [restartMission, setRestartMission] = React.useState(false);
-  const [sweepConfig, setSweepConfig] = React.useState();
+  const [sweepConfig, setSweepConfig] = React.useState([]);
   const [droneConfig, setDroneConfig] = React.useState();
   const [flightControl, setFlightControl] = React.useState('');
+  const [turningPoint, setTurningPoint] = React.useState();
   const [openPopupStartMission, setOpenPopupStartMission] = React.useState(false);
   const [openPopupRestartMission, setOpenPopupRestartMission] = React.useState(false);
   const client = React.useContext(mqttClientContext);
@@ -84,22 +85,37 @@ const MissionConfig = () => {
     flight_control: flightControl
   };
 
-  const fillRackSizeArray = (sweepConfig) => {
-    let arrRackSize = [];
+  const fillRackArray = (sweepConfig) => {
+    let arrSweepConfig = [];
     if (sweepConfig) {
-      for(let i=sweepConfig[0]; i <= sweepConfig[sweepConfig.length-1]; i++) {
-        let configRackSize = {};
-        configRackSize["width"] = widthType15;
-        console.log(sweepConfig.includes(i));
-        if (sweepConfig.includes(i)) {
-          configRackSize["level_height"] = level_height_type15;
-        } else {
-          configRackSize["level_height"] = [];
+      // for(let i=sweepConfig[0]; i <= sweepConfig[sweepConfig.length-1]; i++) {
+      //   let configRackSize = {};
+      //   configRackSize["width"] = widthType15;
+      //   console.log(sweepConfig.includes(i));
+      //   if (sweepConfig.includes(i)) {
+      //     configRackSize["level_height"] = level_height_type15;
+      //   } else {
+      //     configRackSize["level_height"] = [];
+      //   }
+      //   arrRackSize.push(configRackSize)
+      // };
+      for (let i=sweepConfig[0]; i <= Math.max(...sweepConfig); i++) {
+        let config = {};
+        config["rack"] = i;
+        config["rack_id"] = getRackID(i);
+        config["rack_size"] = {
+          width: widthType15,
+          level_height: level_height_type15
         }
-        arrRackSize.push(configRackSize)
+        if (sweepConfig.includes(i)) {
+          config["scan"] = true;
+        } else {
+          config["scan"] = false;
+        }
+        arrSweepConfig.push(config)
       };
     }
-    return arrRackSize;
+    return arrSweepConfig;
   }
 
   const getRackID = (num) => {
@@ -173,6 +189,10 @@ const MissionConfig = () => {
     setRestartMission(data);
   }
 
+  const handleCallbackTurningPoint = (data) => {
+    setTurningPoint(data);
+  }
+
   const handleClose = () => {
     setOpenPopupStartMission(false);
     setOpenPopupRestartMission(false);
@@ -183,16 +203,19 @@ const MissionConfig = () => {
     setTimeout(() => handleClose(), 1000);
   }
 
-  console.log(restartMission);
-  console.log(startMission);
-
   if (startMission) {
+    console.log(sweepConfig);
+    console.log(turningPoint);
     let dataConfig = {};
-    let arrRackSize = fillRackSizeArray(sweepConfig);
-    let arrRackID = getArrayRackID(sweepConfig);
+    let arrRack = [];
+    let arrRackID = [];
+    if (sweepConfig.length > 0) {
+      arrRack = fillRackArray(sweepConfig);
+      arrRackID = getArrayRackID(sweepConfig);
+    }
     publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
     if (droneConfig) {
-        dataConfig = {
+      dataConfig = {
         id: uuid.v4(),
         mission_name: droneConfig.missionName,
         drone_name: droneName,
@@ -201,10 +224,10 @@ const MissionConfig = () => {
         mission_speed: parseFloat(droneConfig.missionSpeed),
         max_altitude: parseFloat(droneConfig.maxAltitude),
         min_altitude: parseFloat(droneConfig.minAltitude),
+        turning_point: turningPoint,
         orientation: droneConfig.droneDirection,
         rack_ids: arrRackID,
-        sweep_config: sweepConfig,
-        rack_size: arrRackSize
+        sweep_config: arrRack,
       };
     } else {
       dataConfig = {
@@ -216,10 +239,10 @@ const MissionConfig = () => {
         mission_speed: 0,
         max_altitude: 0,
         min_altitude: 0.3,
+        turning_point: turningPoint,
         orientation: droneConfig.droneDirection,
         rack_ids: arrRackID,
-        sweep_config: sweepConfig,
-        rack_size: arrRackSize
+        sweep_config: arrRack,
       };
     }
     ConfigService.postConfig(dataConfig).then(
@@ -418,6 +441,7 @@ const MissionConfig = () => {
             xs={12}
           >
             <ItemMatrixConfig 
+              callbackTurningPoint={handleCallbackTurningPoint}
               callbackSweep={handleCallbackSweepConfig}
               callbackLayout={handleCallbackOrientation}
             />

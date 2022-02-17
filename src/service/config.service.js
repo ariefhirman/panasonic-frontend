@@ -15,10 +15,10 @@ class ConfigService {
         mission_speed: config.mission_speed,
         max_altitude: config.max_altitude,
         min_altitude: config.min_altitude,
+        turning_point: config.turning_point,
         orientation: config.orientation,
         rack_ids: config.rack_ids,
         sweep_config: config.sweep_config,
-        rack_size: config.rack_size
       }, { headers: authHeader() })
       .then(response => {
         if (response.data.accessToken) {
