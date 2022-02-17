@@ -83,16 +83,17 @@ const MissionConfig = () => {
     flight_control: flightControl
   };
 
-  const checkMultiRow = (sweepConfig) => {
-    let isMultiRow = false;
-    let firstElement = sweepConfig[0];
-    let lastElement = sweepConfig[sweepConfig.length-1];
-    if (getTurningPoint(firstElement) < getTurningPoint(lastElement)) {
-      isMultiRow = true;
-    }
+  // OBSOLETE
+  // const checkMultiRow = (sweepConfig) => {
+  //   let isMultiRow = false;
+  //   let firstElement = sweepConfig[0];
+  //   let lastElement = sweepConfig[sweepConfig.length-1];
+  //   if (getTurningPoint(firstElement) < getTurningPoint(lastElement)) {
+  //     isMultiRow = true;
+  //   }
 
-    return isMultiRow;
-  }
+  //   return isMultiRow;
+  // }
 
   const checkIsStopFillArray = (index, sweepConfig) => {
     let iterate = true;
@@ -122,66 +123,46 @@ const MissionConfig = () => {
   const fillRackArray = (sweepConfig) => {
     let arrSweepConfig = [];
     if (sweepConfig.length != 0) {
-      // helper variables
-      let multiRow = checkMultiRow(sweepConfig);
-      if (multiRow) {
-        arrSweepConfig = fillMultiRowConfig(sweepConfig, multiRow);
-      } else {
-        arrSweepConfig = fillSingleRowConfig(sweepConfig);
-      }
+      // OBSOLETE
+      // let multiRow = checkMultiRow(sweepConfig);
+      // OBSOLETE
+      // if (multiRow) {
+      //   arrSweepConfig = fillMultiRowConfig(sweepConfig, multiRow);
+      // } else {
+      //   arrSweepConfig = fillSingleRowConfig(sweepConfig);
+      // }
+      arrSweepConfig = fillConfig(sweepConfig);
     }
     return arrSweepConfig;
   }
 
-  const fillSingleRowConfig = (sweepConfig) => {
-    let arrSweepConfig = [];
-    let direction = droneConfig.droneDirection;
-    if (direction == 'left') {
-      for (let i=sweepConfig[0]; i <= Math.max(...sweepConfig); i++) {
-        let config = {};
-        config["rack"] = i;
-        config["rack_id"] = getRackID(i);
-        config["rack_size"] = {
-          width: widthType15,
-          level_height: level_height_type15
-        }
-        if (sweepConfig.includes(i)) {
-          config["scan"] = true;
-        } else {
-          config["scan"] = false;
-        }
-        arrSweepConfig.push(config)
-      };
-    } else {
-      for (let i = Math.max(...sweepConfig); i >= Math.min(...sweepConfig); i--) {
-        let config = {};
-        config["rack"] = i;
-        config["rack_id"] = getRackID(i);
-        config["rack_size"] = {
-          width: widthType15,
-          level_height: level_height_type15
-        }
-        if (sweepConfig.includes(i)) {
-          config["scan"] = true;
-        } else {
-          config["scan"] = false;
-        }
-        arrSweepConfig.push(config)
-      };
-    }
+  // Obsolete
+  // const fillSingleRowConfig = (sweepConfig) => {
+  //   let arrSweepConfig = [];
+  //   let direction = droneConfig.droneDirection;
+  //   if (direction == 'left') {
+  //     for (let i=sweepConfig[0]; i <= Math.max(...sweepConfig); i++) {
+  //       let config = fillSweepConfig(i, sweepConfig)
+  //       arrSweepConfig.push(config)
+  //     };
+  //   } else {
+  //     for (let i = Math.max(...sweepConfig); i >= Math.min(...sweepConfig); i--) {
+  //       let config = fillSweepConfig(i, sweepConfig)
+  //       arrSweepConfig.push(config)
+  //     };
+  //   }
 
-    return arrSweepConfig;
-  };
+  //   return arrSweepConfig;
+  // };
 
-  const fillMultiRowConfig = (sweepConfig, multiRow) => {
+  const fillConfig = (sweepConfig) => {
     let arrSweepConfig = [];
     let iterate = true;
     let direction = droneConfig.droneDirection;
     let i = sweepConfig[0];
     let firstRowElement = sweepConfig[0];
     let isTurning = true;
-    // fill multirow
-    while (iterate && multiRow) {
+    while (iterate) {
       if (direction == 'left') {
         if (i <= getTurningPoint(firstRowElement)) {
           iterate = checkIsStopFillArray(i, sweepConfig);
@@ -199,25 +180,26 @@ const MissionConfig = () => {
           i--;
         }
       } 
-      // FOR RIGHT DIRECTION
-      // else {
-      //   if (i > getRackStartPoint(firstRowElement)) {
-      //     iterate = checkIsStopFillArray(i, sweepConfig);
-      //     let config = fillSweepConfig(i, sweepConfig)
-      //     arrSweepConfig.push(config);
-      //     i--;
-      //   } else {
-      //     if (isTurning) {
-      //       i = getRackStartPoint(i);
-      //       isTurning = false;
-      //     }
-      //     iterate = checkIsStopFillArray(i, sweepConfig);
-      //     let config = fillSweepConfig(i, sweepConfig)
-      //     arrSweepConfig.push(config);
-      //     i++;
-      //   }
-      //   console.log(arrSweepConfig);
-      // }
+      else {
+        if (i >= getRackStartPoint(firstRowElement) && i < getTurningPoint(firstRowElement)) {
+          iterate = checkIsStopFillArray(i, sweepConfig);
+          let config = fillSweepConfig(i, sweepConfig)
+          arrSweepConfig.push(config);
+          i--;
+          if (i == 0) {
+            i = getTurningPoint(i) + 1;
+          };
+        } else {
+          if (isTurning) {
+            i = getRackStartPoint(i);
+            isTurning = false;
+          }
+          iterate = checkIsStopFillArray(i, sweepConfig);
+          let config = fillSweepConfig(i, sweepConfig)
+          arrSweepConfig.push(config);
+          i++;
+        }
+      }
     }
 
     return arrSweepConfig;
@@ -398,20 +380,20 @@ const MissionConfig = () => {
         sweep_config: arrRack,
       };
     }
-    ConfigService.postConfig(dataConfig).then(
-      () => {
-        console.log("Success post data");
-      },
-      error => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        console.log(error.message);
-      }
-    );
+    // ConfigService.postConfig(dataConfig).then(
+    //   () => {
+    //     console.log("Success post data");
+    //   },
+    //   error => {
+    //     const resMessage =
+    //       (error.response &&
+    //         error.response.data &&
+    //         error.response.data.message) ||
+    //       error.message ||
+    //       error.toString();
+    //     console.log(error.message);
+    //   }
+    // );
     console.log(dataConfig);
     setStartMission(false)
   }
