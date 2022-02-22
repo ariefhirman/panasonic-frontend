@@ -11,13 +11,16 @@ const initialState =  {
 }
 
 const emptyBox = [
-  1,25,42,52,53,60,66,67,68,69,70,77,83,84,85,86,90,101,102
+  1,26,43,52,53,59,66,67,68,69,70,76,83,84,85,96
 ]
 
 export const ItemMatrixProgress = (props) => {
   const [progress, setProgress] = React.useState(props.data);
   const [clickable, setClickable] = React.useState(props.isClickable);
   const router = useRouter();
+  React.useEffect(() => {
+    setProgress(props.data);
+  })
 
   const fillArray = (start, end) => {
     let tempArr = [];

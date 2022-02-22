@@ -32,8 +32,7 @@ LinearProgressWithLabel.propTypes = {
 
 export const DroneInformation = (props) => {
   const theme = useTheme();
-  const [progress, setProgress] = React.useState(0);
-  const [dataStatus, setDataStatus] = React.useState(props.data);
+  const [imageArray, setImageArray] = React.useState([]);
   const [stopMission, setStopMission] = React.useState(false);
   const [pauseMission, setPauseMission] = React.useState('false');
   const data = React.useContext(progressInfoContext);
@@ -92,6 +91,9 @@ export const DroneInformation = (props) => {
     connectionColor = "#11AC92"
   }
 
+  React.useEffect(() => {
+    setImageArray(props.dataImage);
+  })
   // React.useEffect(() => {
   //   const timer = setInterval(() => {
   //     setProgress((oldProgress) => {
@@ -393,7 +395,7 @@ export const DroneInformation = (props) => {
                     marginBottom: '1em'
                   }}
                 >
-                  <MediaCard />
+                  <MediaCard data={imageArray} />
                 </Grid>
                 <Grid item
                   lg={4}

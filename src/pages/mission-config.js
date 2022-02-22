@@ -422,7 +422,6 @@ const MissionConfig = () => {
           // router.push('/success-launched');
         }
       }
-      console.log(note);
       // client.end();
     });
   });

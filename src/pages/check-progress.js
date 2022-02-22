@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import EventEmitter from 'events';
 import { useRouter } from 'next/router';
 import { Box, Container, Grid, Pagination } from '@mui/material';
 import { DroneInformation } from '../components/dashboard/drone-information';
@@ -15,13 +16,23 @@ const initialState =  {
   audited: []
 }
 
+// let arrImageDetection = [];
+
 const resMessage = 'Mission Stopped';
 
 const CheckProgress = () => {
   const router = useRouter();
-  const [progress, SetProgress] = React.useState(initialState);
+  const [progress, setProgress] = React.useState({
+    success: [],
+    audited: []
+  });
+  const [progressSuccess, setProgressSuccess] = React.useState([]);
+  const [progressFailed, setProgressFailed] = React.useState([]);
+  const [arrImageDetection, setArrImageDetection] = React.useState([]);
   const [stopMission, setStopMission] = React.useState(false);
   const [pauseMission, setPauseMission] = React.useState('false');
+  const [runDetection, setRunDetection] = React.useState('true'); // true for demo purpose
+  const [imageDetection, setImageDetection] = React.useState({});
   const [droneName, setDroneName] = React.useState('Drone 1');
   const [connectionStatus, setConnectionStatus] = React.useState('Disconnected');
   const [batteryLevel, setBatteryLevel] = React.useState('0%');
@@ -39,6 +50,8 @@ const CheckProgress = () => {
   client.subscribe(mqttTopic.topicConfig.drone_altitude);
   client.subscribe(mqttTopic.topicConfig.drone_vertical_speed);
   client.subscribe(mqttTopic.topicConfig.drone_horizontal_speed);
+  client.subscribe(mqttTopic.topicDetectionProgress);
+  client.subscribe(mqttTopic.topicRunDetection);
 
   const droneInformation = {
     drone_name: droneName,
@@ -68,6 +81,88 @@ const CheckProgress = () => {
     })
   }
 
+  const getIndexRack = (detectionRack) => {
+    let index;
+    let rackID = detectionRack.split("-")[0];
+    // let rackID = detectionRack.substring(0,2);
+    let prefix = rackID[0]
+    let suffix = parseInt(rackID.substring(1));
+    switch(prefix) {
+      case 'A':
+        index = 0;
+        break;
+      case 'B':
+        index = 17;
+        break;
+      case 'C':
+        index = 34;
+        break;
+      case 'D':
+        index = 51;
+        break;
+      case 'E':
+        index = 68;
+        break;
+      case 'F':
+        index = 85;
+        break;
+    }
+    return index + suffix;
+  };
+
+  const updateProgress = (detection) => {
+    const emitter = new EventEmitter()
+    emitter.setMaxListeners(50)
+    let success = progressSuccess;
+    let failed = progressFailed;
+    let rackID = getIndexRack(detection.rack_id);
+    if (detection.status == 1) {
+      if (!success.includes(rackID)) {
+        if (!failed.includes(rackID)) {
+          success.push(rackID);
+          setProgressSuccess(success);
+        }
+      }
+    } else {
+      if (!failed.includes(rackID)) {
+        if (success.includes(rackID)) {
+          success = removeItem(success, rackID);
+          // console.log(success_filtered);
+          // success = success_filtered;
+          setProgressSuccess(success);
+        }
+        failed.push(rackID);
+        setProgressFailed(failed)
+      }
+    }
+    setProgress({
+      success: success,
+      audited: failed
+    })
+    // console.log(progress);
+  }
+
+  const removeItem = (arr, value) => {
+    var index = arr.indexOf(value);
+    if (index > -1) {
+      arr.splice(index, 1);
+    }
+    return arr;
+  }
+
+  const createArrayOfUrls = (objOfUrls) => {
+    const emitter = new EventEmitter()
+    emitter.setMaxListeners(50)
+    let tempArr = [];
+    Object.keys(objOfUrls).forEach(key => {
+      for (let i=0; i<objOfUrls[key].length; i++) {
+        tempArr.push(objOfUrls[key][i].url)
+      }
+    });
+    // arrImageDetection = tempArr;
+    setArrImageDetection(tempArr);
+  }
+
   let note;
   React.useEffect(() => {
     client.on('message', function (topic, message) {
@@ -89,7 +184,20 @@ const CheckProgress = () => {
       } else if (topic == mqttTopic.topicConfig.drone_horizontal_speed) {
         note = message.toString();
         setHorizontalSpeed(note);
-      } 
+      } else if (topic == mqttTopic.topicRunDetection) {
+        note = message.toString();
+        setRunDetection(note);
+      } else if (topic == mqttTopic.topicDetectionProgress) {
+        note = message.toString();
+        let detection = JSON.parse(note);
+        if (runDetection == 'True' || runDetection == 'true') {
+          updateProgress(detection);
+          let objDetection = imageDetection;
+          let rackID = detection.rack_id.split("-")[0];
+          objDetection[rackID] = detection.product_detection;
+          createArrayOfUrls(objDetection);
+        }
+      }
       // console.log(note);
       // client.end();
     });
@@ -156,7 +264,7 @@ const CheckProgress = () => {
                 <DroneInformation 
                   parentcallback={handleCallbackStatus}
                   callbackpause={handlePauseStatus} 
-                  data={progress} 
+                  dataImage={arrImageDetection}  
                   sx={{ height: '100%' }} 
                 />
               </progressInfoContext.Provider>

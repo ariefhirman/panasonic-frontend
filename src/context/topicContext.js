@@ -15,6 +15,8 @@ const topic = React.createContext({
   topicStopMission: 'mission-planner/shutdown',
   topicRestartMission: 'mission-planner/restart',
   topicMissionStarted: 'mission-planner/start/result',
+  topicRunDetection: 'cv/run-detection',
+  topicDetectionProgress: 'cv/status'
 });
 
 export default topic;
